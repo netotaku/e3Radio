@@ -1,0 +1,48 @@
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.7.2/build/cssreset/cssreset-min.css" /></head>
+	</head>
+	<body>
+
+		<form>
+			<input type="text" placeholder="enter some text here..." />	
+		</form>	
+
+		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script>
+
+			$('[placeholder]').each(function(){
+				var $ths = $(this),
+					scrpt = $ths.attr('placeholder') + '        ',
+					chr,
+					str,
+					reset = function(){
+						str = ' > ';
+						chr = 0;	
+					},
+					set = function(){
+						if(scrpt[chr]){
+							str += scrpt[chr++];
+						} else {
+							reset();							
+						}
+						$ths.attr('placeholder', str);
+					},
+					tck = function(){
+						setTimeout(function(){
+							set();
+							tck();
+						}, 200);	
+					};
+
+				reset();	
+				set();
+				tck();
+
+			});
+
+
+		</script>
+
+	</body>
+</html>	
