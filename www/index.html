@@ -61,11 +61,12 @@
 -->
 
 		<script type="text/html" id="tracks">
+			<p><a href="#" class="add">add</a></p>
 			<ul id="tracks">
 			<% 
 				var i = 1;
 				_.each(tracks, function(track){ %>
-				<li>
+				<li data-track-id="<%= track.TrackID %>">
 					<p style="background-image: <%= track.PictureExtraLarge ? 'url(' + track.PictureExtraLarge +')' : 'none' %>" data-id="<%= track.TrackPlayedID %>">
 						<span class="number"><%= i++ %></span>
 						<span class="info">
@@ -146,18 +147,30 @@
 			    });
 
 			// Define the View
-			chartView = Backbone.View.extend({
-			    initialize: function() {
-			      _.bindAll(this, 'render');
-			      // create a collection
-			      this.collection = new tracks;
-			      // Fetch the collection and call render() method
-			      var that = this;
-			      this.collection.fetch({
-			        success: function () {
-			            that.render();
-			        }
-			      });
+			var chartView = Backbone.View.extend({
+				    events: { 
+				      'click #tracks li':  'viewTrack',
+				      'click .add':  'add',
+				    },
+				    add: function(e){
+				    	e.preventDefault();
+				    	console.log('add');
+				    },
+				    viewTrack: function(e){
+				    	var $track = $(e.currentTarget);
+				    	router.navigate('track/' + $track.data('track-id'), { trigger: true });
+				    }, 
+				    initialize: function() {
+				      _.bindAll(this, 'render', 'viewTrack', 'add');
+				      // create a collection
+				      this.collection = new tracks;
+				      // Fetch the collection and call render() method
+				      var that = this;
+				      this.collection.fetch({
+				        success: function () {
+				            that.render();
+			        	}
+			      	});
 			    },
 			    // Use an extern template
 			    template: _.template($('#tracks').html()),
@@ -168,10 +181,7 @@
 			    }
 			});
 
-			var chart = new chartView({
-			    // define the el where the view will render
-			    el: $('#e3r')
-			});
+
 			/*
 
 			var chart = (function(){
@@ -230,17 +240,21 @@
 			var routes = Backbone.Router.extend({
 			    routes: {
 			        "": "defaultRoute",
-			        "chart/:id": "chart",
+			        //"chart/:id": "chart",
 					"track/:id": "track"
 			    },
 			    defaultRoute: function () {
+    				var chart = new chartView({
+					    // define the el where the view will render
+					    el: $('#e3r')
+					});
 					//util.page('chart');
 					//chart.get('coming-up');
 			    },
-			    chart: function(id){
+			    //chart: function(id){
 			    	//util.page('chart');
 			    	//chart.get(id);	
-			    },
+			    //},
 			    track: function(id){
 			    	
 			    	//data.track(id, {
