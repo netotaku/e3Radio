@@ -1,0 +1,530 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="E3RadioModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="E3RadioModelStoreContainer">
+          <EntitySet Name="Queue" EntityType="E3RadioModel.Store.Queue" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="QueueVote" EntityType="E3RadioModel.Store.QueueVote" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Track" EntityType="E3RadioModel.Store.Track" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="TrackLike" EntityType="E3RadioModel.Store.TrackLike" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="TrackPlayed" EntityType="E3RadioModel.Store.TrackPlayed" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="User" EntityType="E3RadioModel.Store.User" store:Type="Tables" Schema="dbo" />
+          <AssociationSet Name="FK_Queue_Track" Association="E3RadioModel.Store.FK_Queue_Track">
+            <End Role="Track" EntitySet="Track" />
+            <End Role="Queue" EntitySet="Queue" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Queue_User" Association="E3RadioModel.Store.FK_Queue_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="Queue" EntitySet="Queue" />
+          </AssociationSet>
+          <AssociationSet Name="FK_QueueVote_Queue" Association="E3RadioModel.Store.FK_QueueVote_Queue">
+            <End Role="Queue" EntitySet="Queue" />
+            <End Role="QueueVote" EntitySet="QueueVote" />
+          </AssociationSet>
+          <AssociationSet Name="FK_QueueVote_User" Association="E3RadioModel.Store.FK_QueueVote_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="QueueVote" EntitySet="QueueVote" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TrackLike_Track" Association="E3RadioModel.Store.FK_TrackLike_Track">
+            <End Role="Track" EntitySet="Track" />
+            <End Role="TrackLike" EntitySet="TrackLike" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TrackLike_User" Association="E3RadioModel.Store.FK_TrackLike_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="TrackLike" EntitySet="TrackLike" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TrackPlayed_Track" Association="E3RadioModel.Store.FK_TrackPlayed_Track">
+            <End Role="Track" EntitySet="Track" />
+            <End Role="TrackPlayed" EntitySet="TrackPlayed" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Queue">
+          <Key>
+            <PropertyRef Name="QueueID" />
+          </Key>
+          <Property Name="QueueID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="bigint" Nullable="false" />
+          <Property Name="TrackID" Type="int" Nullable="false" />
+          <Property Name="UpVotes" Type="int" Nullable="false" />
+          <Property Name="DownVotes" Type="int" Nullable="false" />
+          <Property Name="DateAdded" Type="datetime" Nullable="false" />
+          <Property Name="DatePlayed" Type="datetime" />
+        </EntityType>
+        <EntityType Name="QueueVote">
+          <Key>
+            <PropertyRef Name="QueueID" />
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="QueueID" Type="int" Nullable="false" />
+          <Property Name="UserID" Type="bigint" Nullable="false" />
+          <Property Name="IsVoteUp" Type="bit" Nullable="false" />
+          <Property Name="DateVoted" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Track">
+          <Key>
+            <PropertyRef Name="TrackID" />
+          </Key>
+          <Property Name="TrackID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Artist" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="TrackName" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="Album" Type="nvarchar" MaxLength="255" />
+          <Property Name="LastFmLink" Type="nvarchar" MaxLength="255" />
+          <Property Name="PictureSmall" Type="nvarchar" MaxLength="255" />
+          <Property Name="PictureMedium" Type="nvarchar" MaxLength="255" />
+          <Property Name="PictureLarge" Type="nvarchar" MaxLength="255" />
+          <Property Name="PictureExtraLarge" Type="nvarchar" MaxLength="255" />
+          <Property Name="DateAdded" Type="datetime" Nullable="false" />
+          <Property Name="DateUpdated" Type="datetime" />
+          <Property Name="Likes" Type="int" Nullable="false" />
+          <Property Name="Dislikes" Type="int" Nullable="false" />
+          <Property Name="SpotifyUri" Type="nvarchar" MaxLength="255" />
+          <Property Name="Length" Type="float" />
+          <Property Name="Popularity" Type="float" />
+        </EntityType>
+        <EntityType Name="TrackLike">
+          <Key>
+            <PropertyRef Name="TrackID" />
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="TrackID" Type="int" Nullable="false" />
+          <Property Name="UserID" Type="bigint" Nullable="false" />
+          <Property Name="IsLike" Type="bit" Nullable="false" />
+          <Property Name="DateLiked" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TrackPlayed">
+          <Key>
+            <PropertyRef Name="TrackPlayedID" />
+          </Key>
+          <Property Name="TrackPlayedID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ScrobbleUsername" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="TrackID" Type="int" Nullable="false" />
+          <Property Name="DatePlayed" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="bigint" Nullable="false" />
+          <Property Name="Username" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="FacebookLink" Type="nvarchar" Nullable="false" MaxLength="255" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Queue_Track">
+          <End Role="Track" Type="E3RadioModel.Store.Track" Multiplicity="1" />
+          <End Role="Queue" Type="E3RadioModel.Store.Queue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Track">
+              <PropertyRef Name="TrackID" />
+            </Principal>
+            <Dependent Role="Queue">
+              <PropertyRef Name="TrackID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Queue_User">
+          <End Role="User" Type="E3RadioModel.Store.User" Multiplicity="1" />
+          <End Role="Queue" Type="E3RadioModel.Store.Queue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="Queue">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_QueueVote_Queue">
+          <End Role="Queue" Type="E3RadioModel.Store.Queue" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="QueueVote" Type="E3RadioModel.Store.QueueVote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Queue">
+              <PropertyRef Name="QueueID" />
+            </Principal>
+            <Dependent Role="QueueVote">
+              <PropertyRef Name="QueueID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_QueueVote_User">
+          <End Role="User" Type="E3RadioModel.Store.User" Multiplicity="1" />
+          <End Role="QueueVote" Type="E3RadioModel.Store.QueueVote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="QueueVote">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TrackLike_Track">
+          <End Role="Track" Type="E3RadioModel.Store.Track" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="TrackLike" Type="E3RadioModel.Store.TrackLike" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Track">
+              <PropertyRef Name="TrackID" />
+            </Principal>
+            <Dependent Role="TrackLike">
+              <PropertyRef Name="TrackID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TrackLike_User">
+          <End Role="User" Type="E3RadioModel.Store.User" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="TrackLike" Type="E3RadioModel.Store.TrackLike" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="TrackLike">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TrackPlayed_Track">
+          <End Role="Track" Type="E3RadioModel.Store.Track" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="TrackPlayed" Type="E3RadioModel.Store.TrackPlayed" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Track">
+              <PropertyRef Name="TrackID" />
+            </Principal>
+            <Dependent Role="TrackPlayed">
+              <PropertyRef Name="TrackID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="E3RadioModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="e3RadioEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Queues" EntityType="E3RadioModel.Queue" />
+          <EntitySet Name="QueueVotes" EntityType="E3RadioModel.QueueVote" />
+          <EntitySet Name="Tracks" EntityType="E3RadioModel.Track" />
+          <EntitySet Name="TrackLikes" EntityType="E3RadioModel.TrackLike" />
+          <EntitySet Name="Users" EntityType="E3RadioModel.User" />
+          <AssociationSet Name="FK_Queue_Track" Association="E3RadioModel.FK_Queue_Track">
+            <End Role="Track" EntitySet="Tracks" />
+            <End Role="Queue" EntitySet="Queues" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Queue_User" Association="E3RadioModel.FK_Queue_User">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Queue" EntitySet="Queues" />
+          </AssociationSet>
+          <AssociationSet Name="FK_QueueVote_Queue" Association="E3RadioModel.FK_QueueVote_Queue">
+            <End Role="Queue" EntitySet="Queues" />
+            <End Role="QueueVote" EntitySet="QueueVotes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_QueueVote_User" Association="E3RadioModel.FK_QueueVote_User">
+            <End Role="User" EntitySet="Users" />
+            <End Role="QueueVote" EntitySet="QueueVotes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TrackLike_Track" Association="E3RadioModel.FK_TrackLike_Track">
+            <End Role="Track" EntitySet="Tracks" />
+            <End Role="TrackLike" EntitySet="TrackLikes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TrackLike_User" Association="E3RadioModel.FK_TrackLike_User">
+            <End Role="User" EntitySet="Users" />
+            <End Role="TrackLike" EntitySet="TrackLikes" />
+          </AssociationSet>
+          <EntitySet Name="TrackPlayeds" EntityType="E3RadioModel.TrackPlayed" />
+          <AssociationSet Name="FK_TrackPlayed_Track" Association="E3RadioModel.FK_TrackPlayed_Track">
+            <End Role="Track" EntitySet="Tracks" />
+            <End Role="TrackPlayed" EntitySet="TrackPlayeds" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Queue">
+          <Key>
+            <PropertyRef Name="QueueID" />
+          </Key>
+          <Property Name="QueueID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="Int64" Nullable="false" />
+          <Property Name="TrackID" Type="Int32" Nullable="false" />
+          <Property Name="UpVotes" Type="Int32" Nullable="false" />
+          <Property Name="DownVotes" Type="Int32" Nullable="false" />
+          <Property Name="DateAdded" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="DatePlayed" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Track" Relationship="E3RadioModel.FK_Queue_Track" FromRole="Queue" ToRole="Track" />
+          <NavigationProperty Name="User" Relationship="E3RadioModel.FK_Queue_User" FromRole="Queue" ToRole="User" />
+          <NavigationProperty Name="QueueVotes" Relationship="E3RadioModel.FK_QueueVote_Queue" FromRole="Queue" ToRole="QueueVote" />
+        </EntityType>
+        <EntityType Name="QueueVote">
+          <Key>
+            <PropertyRef Name="QueueID" />
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="QueueID" Type="Int32" Nullable="false" />
+          <Property Name="UserID" Type="Int64" Nullable="false" />
+          <Property Name="IsVoteUp" Type="Boolean" Nullable="false" />
+          <Property Name="DateVoted" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Queue" Relationship="E3RadioModel.FK_QueueVote_Queue" FromRole="QueueVote" ToRole="Queue" />
+          <NavigationProperty Name="User" Relationship="E3RadioModel.FK_QueueVote_User" FromRole="QueueVote" ToRole="User" />
+        </EntityType>
+        <EntityType Name="Track">
+          <Key>
+            <PropertyRef Name="TrackID" />
+          </Key>
+          <Property Name="TrackID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Artist" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="TrackName" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="Album" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="LastFmLink" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="PictureSmall" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="PictureMedium" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="PictureLarge" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="PictureExtraLarge" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="DateAdded" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="DateUpdated" Type="DateTime" Precision="3" />
+          <Property Name="Likes" Type="Int32" Nullable="false" />
+          <Property Name="Dislikes" Type="Int32" Nullable="false" />
+          <Property Name="SpotifyUri" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="Length" Type="Double" />
+          <Property Name="Popularity" Type="Double" />
+          <NavigationProperty Name="Queues" Relationship="E3RadioModel.FK_Queue_Track" FromRole="Track" ToRole="Queue" />
+          <NavigationProperty Name="TrackLikes" Relationship="E3RadioModel.FK_TrackLike_Track" FromRole="Track" ToRole="TrackLike" />
+          <NavigationProperty Name="TrackPlayeds" Relationship="E3RadioModel.FK_TrackPlayed_Track" FromRole="Track" ToRole="TrackPlayed" />
+        </EntityType>
+        <EntityType Name="TrackLike">
+          <Key>
+            <PropertyRef Name="TrackID" />
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="TrackID" Type="Int32" Nullable="false" />
+          <Property Name="UserID" Type="Int64" Nullable="false" />
+          <Property Name="IsLike" Type="Boolean" Nullable="false" />
+          <Property Name="DateLiked" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Track" Relationship="E3RadioModel.FK_TrackLike_Track" FromRole="TrackLike" ToRole="Track" />
+          <NavigationProperty Name="User" Relationship="E3RadioModel.FK_TrackLike_User" FromRole="TrackLike" ToRole="User" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="Int64" Nullable="false" />
+          <Property Name="Username" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="FacebookLink" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Queues" Relationship="E3RadioModel.FK_Queue_User" FromRole="User" ToRole="Queue" />
+          <NavigationProperty Name="QueueVotes" Relationship="E3RadioModel.FK_QueueVote_User" FromRole="User" ToRole="QueueVote" />
+          <NavigationProperty Name="TrackLikes" Relationship="E3RadioModel.FK_TrackLike_User" FromRole="User" ToRole="TrackLike" />
+        </EntityType>
+        <Association Name="FK_Queue_Track">
+          <End Role="Track" Type="E3RadioModel.Track" Multiplicity="1" />
+          <End Role="Queue" Type="E3RadioModel.Queue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Track">
+              <PropertyRef Name="TrackID" />
+            </Principal>
+            <Dependent Role="Queue">
+              <PropertyRef Name="TrackID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Queue_User">
+          <End Role="User" Type="E3RadioModel.User" Multiplicity="1" />
+          <End Role="Queue" Type="E3RadioModel.Queue" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="Queue">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_QueueVote_Queue">
+          <End Role="Queue" Type="E3RadioModel.Queue" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="QueueVote" Type="E3RadioModel.QueueVote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Queue">
+              <PropertyRef Name="QueueID" />
+            </Principal>
+            <Dependent Role="QueueVote">
+              <PropertyRef Name="QueueID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_QueueVote_User">
+          <End Role="User" Type="E3RadioModel.User" Multiplicity="1" />
+          <End Role="QueueVote" Type="E3RadioModel.QueueVote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="QueueVote">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TrackLike_Track">
+          <End Role="Track" Type="E3RadioModel.Track" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="TrackLike" Type="E3RadioModel.TrackLike" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Track">
+              <PropertyRef Name="TrackID" />
+            </Principal>
+            <Dependent Role="TrackLike">
+              <PropertyRef Name="TrackID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TrackLike_User">
+          <End Role="User" Type="E3RadioModel.User" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="TrackLike" Type="E3RadioModel.TrackLike" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="UserID" />
+            </Principal>
+            <Dependent Role="TrackLike">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="TrackPlayed">
+          <Key>
+            <PropertyRef Name="TrackPlayedID" />
+          </Key>
+          <Property Type="Int32" Name="TrackPlayedID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="ScrobbleUsername" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="TrackID" Nullable="false" />
+          <Property Type="DateTime" Name="DatePlayed" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Track" Relationship="E3RadioModel.FK_TrackPlayed_Track" FromRole="TrackPlayed" ToRole="Track" />
+        </EntityType>
+        <Association Name="FK_TrackPlayed_Track">
+          <End Type="E3RadioModel.Track" Role="Track" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="E3RadioModel.TrackPlayed" Role="TrackPlayed" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Track">
+              <PropertyRef Name="TrackID" />
+            </Principal>
+            <Dependent Role="TrackPlayed">
+              <PropertyRef Name="TrackID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="E3RadioModelStoreContainer" CdmEntityContainer="e3RadioEntities">
+          <EntitySetMapping Name="Queues">
+            <EntityTypeMapping TypeName="E3RadioModel.Queue">
+              <MappingFragment StoreEntitySet="Queue">
+                <ScalarProperty Name="QueueID" ColumnName="QueueID" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="TrackID" ColumnName="TrackID" />
+                <ScalarProperty Name="UpVotes" ColumnName="UpVotes" />
+                <ScalarProperty Name="DownVotes" ColumnName="DownVotes" />
+                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
+                <ScalarProperty Name="DatePlayed" ColumnName="DatePlayed" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="QueueVotes">
+            <EntityTypeMapping TypeName="E3RadioModel.QueueVote">
+              <MappingFragment StoreEntitySet="QueueVote">
+                <ScalarProperty Name="QueueID" ColumnName="QueueID" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="IsVoteUp" ColumnName="IsVoteUp" />
+                <ScalarProperty Name="DateVoted" ColumnName="DateVoted" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tracks">
+            <EntityTypeMapping TypeName="E3RadioModel.Track">
+              <MappingFragment StoreEntitySet="Track">
+                <ScalarProperty Name="TrackID" ColumnName="TrackID" />
+                <ScalarProperty Name="Artist" ColumnName="Artist" />
+                <ScalarProperty Name="TrackName" ColumnName="TrackName" />
+                <ScalarProperty Name="Album" ColumnName="Album" />
+                <ScalarProperty Name="LastFmLink" ColumnName="LastFmLink" />
+                <ScalarProperty Name="PictureSmall" ColumnName="PictureSmall" />
+                <ScalarProperty Name="PictureMedium" ColumnName="PictureMedium" />
+                <ScalarProperty Name="PictureLarge" ColumnName="PictureLarge" />
+                <ScalarProperty Name="PictureExtraLarge" ColumnName="PictureExtraLarge" />
+                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
+                <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
+                <ScalarProperty Name="Likes" ColumnName="Likes" />
+                <ScalarProperty Name="Dislikes" ColumnName="Dislikes" />
+                <ScalarProperty Name="SpotifyUri" ColumnName="SpotifyUri" />
+                <ScalarProperty Name="Length" ColumnName="Length" />
+                <ScalarProperty Name="Popularity" ColumnName="Popularity" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TrackLikes">
+            <EntityTypeMapping TypeName="E3RadioModel.TrackLike">
+              <MappingFragment StoreEntitySet="TrackLike">
+                <ScalarProperty Name="TrackID" ColumnName="TrackID" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="IsLike" ColumnName="IsLike" />
+                <ScalarProperty Name="DateLiked" ColumnName="DateLiked" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="E3RadioModel.User">
+              <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="FacebookLink" ColumnName="FacebookLink" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TrackPlayeds">
+            <EntityTypeMapping TypeName="E3RadioModel.TrackPlayed">
+              <MappingFragment StoreEntitySet="TrackPlayed">
+                <ScalarProperty Name="DatePlayed" ColumnName="DatePlayed" />
+                <ScalarProperty Name="TrackID" ColumnName="TrackID" />
+                <ScalarProperty Name="ScrobbleUsername" ColumnName="ScrobbleUsername" />
+                <ScalarProperty Name="TrackPlayedID" ColumnName="TrackPlayedID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
