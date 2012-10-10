@@ -1,3 +1,5 @@
 .DS_Store
 *.user
 *.suo
+/src/e3Radio.API/bin
+/src/e3Radio.API/obj
