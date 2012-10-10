@@ -3,6 +3,27 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Express 2012 for Web
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "e3Radio.API", "e3Radio.API\e3Radio.API.csproj", "{7E7706D9-E426-4CDA-99C2-D46F2DF2F5F4}"
 EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "www", "http://localhost:65211", "{6760DFB6-73C3-4F84-8AB8-AA4E7E889ECF}"
+	ProjectSection(WebsiteProperties) = preProject
+		UseIISExpress = "true"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/www"
+		Debug.AspNetCompiler.PhysicalPath = "..\www\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\www\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/www"
+		Release.AspNetCompiler.PhysicalPath = "..\www\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\www\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		SlnRelativePath = "..\www\"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +34,10 @@ Global
 		{7E7706D9-E426-4CDA-99C2-D46F2DF2F5F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E7706D9-E426-4CDA-99C2-D46F2DF2F5F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E7706D9-E426-4CDA-99C2-D46F2DF2F5F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6760DFB6-73C3-4F84-8AB8-AA4E7E889ECF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6760DFB6-73C3-4F84-8AB8-AA4E7E889ECF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6760DFB6-73C3-4F84-8AB8-AA4E7E889ECF}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{6760DFB6-73C3-4F84-8AB8-AA4E7E889ECF}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
