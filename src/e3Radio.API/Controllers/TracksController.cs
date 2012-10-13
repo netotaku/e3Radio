@@ -7,16 +7,26 @@ using System.Web.Http;
 
 namespace e3Radio.API.Controllers
 {
+    /// <summary>
+    /// Handles Track listing and voting requests.
+    /// </summary>
     public class TracksController : ApiController
     {
-        // GET api/tracks/{id}?page=X&size=Y
-        public dynamic Get(string id, int page = 1, int size = 10)
+        /// <summary>
+        /// Handles requests for track listings.
+        /// GET api/tracks/{type}?page=X&size=Y
+        /// </summary>
+        /// <param name="type">One of the chart types (see GetTracksQueryable)</param>
+        /// <param name="page">Page number starting from 1</param>
+        /// <param name="size">Page size</param>
+        /// <returns></returns>
+        public dynamic Get(string type, int page = 1, int size = 10)
         {
             // fb user id to get my vote
             var userId = Facebook.Web.FacebookWebContext.Current.UserId;
 
             // get from cache if possible
-            string cacheKey = GetCacheKey(id, userId, page, size);
+            string cacheKey = GetCacheKey(type, userId, page, size);
             var results = System.Web.HttpContext.Current.Cache[cacheKey];
             if (results == null)
             {
@@ -26,7 +36,7 @@ namespace e3Radio.API.Controllers
                     db.Configuration.LazyLoadingEnabled = false;
 
                     // filter and order by
-                    var filteredQuery = GetTracksQueryable(id, userId, db);
+                    var filteredQuery = GetTracksQueryable(type, userId, db);
 
                     // pagination
                     var pagedQuery = filteredQuery.Skip((page - 1) * size).Take(size);
@@ -58,16 +68,24 @@ namespace e3Radio.API.Controllers
 
                     results = resultQ.ToList();
                 }
-                System.Web.HttpContext.Current.Cache.Insert(cacheKey, results, null, DateTime.Now.AddMinutes(1), System.Web.Caching.Cache.NoSlidingExpiration);
+                System.Web.HttpContext.Current.Cache.Insert(cacheKey, results, null, DateTime.Now.AddSeconds(10), System.Web.Caching.Cache.NoSlidingExpiration);
             }
             return results;
         }
 
-        private static string GetCacheKey(string id, long userId, int page, int size)
+        /// <summary>
+        /// Creates a unique key for this track request
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="userId"></param>
+        /// <param name="page"></param>
+        /// <param name="size"></param>
+        /// <returns></returns>
+        private static string GetCacheKey(string type, long userId, int page, int size)
         {
             // create a unique key for this track request
-            string key = "e3Radio-tracks-" + id + "/" + page + "/" + size;
-            if (id.StartsWith("my-"))
+            string key = "e3Radio-tracks-" + type + "/" + page + "/" + size;
+            if (type.StartsWith("my-"))
             {
                 // this type of feed is specific to the user so cache by user
                 key += "/" + userId;
@@ -75,6 +93,14 @@ namespace e3Radio.API.Controllers
             return key;
         }
 
+        /// <summary>
+        /// Gets an IQueryable which selects Tracks filtered and ordered
+        /// based on the chart type requested.
+        /// </summary>
+        /// <param name="chart"></param>
+        /// <param name="userId"></param>
+        /// <param name="db"></param>
+        /// <returns></returns>
         private static IQueryable<Models.Track> GetTracksQueryable(string chart, long userId, Models.e3RadioEntities db)
         {
             IQueryable<Models.Track> result;
@@ -148,6 +174,64 @@ namespace e3Radio.API.Controllers
             return result;
         }
 
+        /// <summary>
+        /// Handles vote actions.
+        /// </summary>
+        /// <param name="type">love, hate or unvote</param>
+        /// <param name="id">a track ID as returned by the track listing</param>
+        public void Get(string type, int id)
+        {
+            // fb user id of current user
+            var userId = Facebook.Web.FacebookWebContext.Current.UserId;
 
+            // set user ID to "autoplay" bot for testing purposes when not authed
+            if (userId == 0) userId = 1;
+
+            using (var db = new Models.e3RadioEntities())
+            {
+                // check user exists in db
+                var u = db.Users.SingleOrDefault(us => us.UserID == userId);
+                if (u == null)
+                {
+                    u = new Models.User();
+
+                    // get the dude's info from book of face
+                    var fb = new Facebook.Web.FacebookWebClient();
+                    dynamic me = fb.Get("/me");
+                    u.UserID = userId;
+                    u.Username = me.username ?? me.name;
+                    u.Name = me.name;
+                    u.FacebookLink = me.link;
+                    u.DateCreated = DateTime.Now;
+
+                    db.Users.Add(u);
+                    db.SaveChanges();
+                }
+
+                // add, remove or update track like
+                var existingLike = db.TrackLikes.SingleOrDefault(tl => tl.TrackID == id && tl.UserID == userId);
+                if (existingLike == null)
+                {
+                    // add new
+                    existingLike = new Models.TrackLike();
+                    existingLike.TrackID = id;
+                    existingLike.UserID = userId;
+                    db.TrackLikes.Add(existingLike);
+                }
+                if (type == "unvote")
+                {
+                    // delete the love/hate entry
+                    db.TrackLikes.Remove(existingLike);
+                }
+                else
+                {
+                    // add or update
+                    existingLike.IsLike = (type == "love");
+                    existingLike.DateLiked = DateTime.Now;
+                }
+                db.SaveChanges();
+            }
+
+        }
     }
 }

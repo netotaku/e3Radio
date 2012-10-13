@@ -14,7 +14,7 @@ namespace e3Radio.API
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
-                routeTemplate: "{controller}/{id}",
+                routeTemplate: "{controller}/{type}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
 
