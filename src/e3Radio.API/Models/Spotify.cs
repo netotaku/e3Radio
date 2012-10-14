@@ -8,13 +8,20 @@ namespace e3Radio.API.Models
 {
     public class Spotify
     {
-
+        /// <summary>
+        /// Find a Track from it's Spotify URI.
+        /// If it isn't in the DB we will load it's details and create it.
+        /// </summary>
+        /// <param name="db"></param>
+        /// <param name="reqUri"></param>
+        /// <returns></returns>
         public static Track GetOrCreateTrackBySpotifyUri(e3RadioEntities db, string reqUri)
         {
             // find existing track, if it has been played before
             var track = db.Tracks.FirstOrDefault(t => t.SpotifyUri == reqUri);
             if (track == null)
             {
+                // Track is not in the database, load info from spotify/last.fm
                 track = new Track()
                 {
                     SpotifyUri = reqUri,
@@ -26,11 +33,21 @@ namespace e3Radio.API.Models
                 // look up track info from spotify or die
                 if (!LookupTrackInfo(track)) return null;
 
+                // update additional track info (cover art) from last.fm
+                LastFM.UpdateTrackFromLastFm(track);
+
                 db.Tracks.Add(track);
             }
+            else // Track is already in the database.
+            {
+                // Update fields we recently added from Spotify
+                if (!track.Length.HasValue)
+                    LookupTrackInfo(track);
 
-            // update additional track info from last.fm
-            LastFM.UpdateTrackFromLastFm(track);
+                // Try to get cover art if not set
+                if (track.PictureSmall == null)
+                    LastFM.UpdateTrackFromLastFm(track);
+            }
 
             return track;
         }

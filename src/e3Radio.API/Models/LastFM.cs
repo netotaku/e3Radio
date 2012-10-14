@@ -17,7 +17,6 @@ namespace e3Radio.API.Models
                 XElement playedTrack = XElement.Load("http://ws.audioscrobbler.com/2.0/?method=track.getInfo&artist=" + System.Web.HttpUtility.UrlEncode(track.Artist) + "&track=" + System.Web.HttpUtility.UrlEncode(track.TrackName) + "&api_key=" + ConfigurationManager.AppSettings["e3RadioLastFmApiKey"]);
 
                 // Update track info
-                track.Album = (string)playedTrack.Element("album").Element("title");
                 track.LastFmLink = (string)playedTrack.Element("url");
                 foreach (var image in playedTrack.Elements("image"))
                 {
@@ -30,6 +29,7 @@ namespace e3Radio.API.Models
                     }
                 }
                 track.DateUpdated = DateTime.Now;
+                track.Album = (string)playedTrack.Element("album").Element("title");
             }
             catch
             {
