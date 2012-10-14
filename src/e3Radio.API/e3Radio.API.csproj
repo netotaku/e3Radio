@@ -127,41 +127,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\LastFM.cs" />
-    <Compile Include="Models\Queue.cs">
-      <DependentUpon>RadioModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\QueueVote.cs">
-      <DependentUpon>RadioModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\RadioModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>RadioModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\RadioModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>RadioModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\RadioModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>RadioModel.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Spotify.cs" />
-    <Compile Include="Models\Track.cs">
-      <DependentUpon>RadioModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\TrackLike.cs">
-      <DependentUpon>RadioModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\TrackPlayed.cs">
-      <DependentUpon>RadioModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\User.cs">
-      <DependentUpon>RadioModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -180,36 +145,22 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EntityDeploy Include="Models\RadioModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>RadioModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Models\RadioModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>RadioModel.edmx</DependentUpon>
-      <LastGenOutput>RadioModel.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\RadioModel.edmx.diagram">
-      <DependentUpon>RadioModel.edmx</DependentUpon>
-    </Content>
-    <Content Include="Models\RadioModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>RadioModel.edmx</DependentUpon>
-      <LastGenOutput>RadioModel.cs</LastGenOutput>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\PublishProfiles\file.pubxml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\e3Radio.Data\e3Radio.Data.csproj">
+      <Project>{c0f797c6-ad72-4111-813d-4c29c8b111d0}</Project>
+      <Name>e3Radio.Data</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

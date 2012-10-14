@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace e3Radio.API.Models
+namespace e3Radio.Data
 {
     using System;
     using System.Collections.Generic;

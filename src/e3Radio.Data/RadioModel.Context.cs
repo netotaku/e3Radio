@@ -7,16 +7,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace e3Radio.API.Models
+namespace e3Radio.Data
 {
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class e3RadioEntities : DbContext
+    public partial class E3RadioEntities : DbContext
     {
-        public e3RadioEntities()
-            : base("name=e3RadioEntities")
+        public E3RadioEntities()
+            : base("name=E3RadioEntities")
         {
         }
     
@@ -29,7 +29,7 @@ namespace e3Radio.API.Models
         public DbSet<QueueVote> QueueVotes { get; set; }
         public DbSet<Track> Tracks { get; set; }
         public DbSet<TrackLike> TrackLikes { get; set; }
-        public DbSet<User> Users { get; set; }
         public DbSet<TrackPlayed> TrackPlayeds { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }

@@ -11,7 +11,7 @@ namespace e3Radio.API.Controllers
     {
         public object Get()
         {
-            using (var db = new Models.e3RadioEntities())
+            using (var db = new e3Radio.Data.E3RadioEntities())
             {
                 db.Configuration.LazyLoadingEnabled = false;
 
@@ -66,13 +66,13 @@ namespace e3Radio.API.Controllers
 
         private void VoteOnQueuedTrack(int queueId, long userId, string type)
         {
-            using (var db = new Models.e3RadioEntities())
+            using (var db = new e3Radio.Data.E3RadioEntities())
             {
                 // check user exists in db
                 var u = db.Users.SingleOrDefault(us => us.UserID == userId);
                 if (u == null)
                 {
-                    u = new Models.User();
+                    u = new e3Radio.Data.User();
 
                     // get the dude's info from book of face
                     var fb = new Facebook.Web.FacebookWebClient();
@@ -92,7 +92,7 @@ namespace e3Radio.API.Controllers
                 if (existingLike == null)
                 {
                     // add new
-                    existingLike = new Models.QueueVote();
+                    existingLike = new e3Radio.Data.QueueVote();
                     existingLike.QueueID = queueId;
                     existingLike.UserID = userId;
                     db.QueueVotes.Add(existingLike);
@@ -114,17 +114,17 @@ namespace e3Radio.API.Controllers
 
         private void AddTrackToQueue(string spotifyUri, long userId)
         {
-            using (var db = new Models.e3RadioEntities())
+            using (var db = new e3Radio.Data.E3RadioEntities())
             {
                 // find existing track, if it has been played before, or add
-                var track = Models.Spotify.GetOrCreateTrackBySpotifyUri(db, spotifyUri);
+                var track = e3Radio.Data.Spotify.GetOrCreateTrackBySpotifyUri(db, spotifyUri);
                 if (track == null)
                 {
                     throw new Exception("Failed to find Spotify Track");
                 }
 
                 // add to the play queue
-                var queue = new Models.Queue()
+                var queue = new e3Radio.Data.Queue()
                 {
                     DateAdded = DateTime.Now,
                     UserID = userId,
@@ -138,7 +138,7 @@ namespace e3Radio.API.Controllers
                 if (userId > 1)
                 {
                     queue.UpVotes = 1;
-                    queue.QueueVotes.Add(new Models.QueueVote()
+                    queue.QueueVotes.Add(new e3Radio.Data.QueueVote()
                     {
                         DateVoted = DateTime.Now,
                         IsVoteUp = true,

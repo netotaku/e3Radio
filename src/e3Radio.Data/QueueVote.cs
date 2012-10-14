@@ -7,19 +7,19 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace e3Radio.API.Models
+namespace e3Radio.Data
 {
     using System;
     using System.Collections.Generic;
     
-    public partial class TrackLike
+    public partial class QueueVote
     {
-        public int TrackID { get; set; }
+        public int QueueID { get; set; }
         public long UserID { get; set; }
-        public bool IsLike { get; set; }
-        public System.DateTime DateLiked { get; set; }
+        public bool IsVoteUp { get; set; }
+        public System.DateTime DateVoted { get; set; }
     
-        public virtual Track Track { get; set; }
+        public virtual Queue Queue { get; set; }
         public virtual User User { get; set; }
     }
 }

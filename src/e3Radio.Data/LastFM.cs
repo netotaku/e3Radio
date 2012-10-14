@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 
-namespace e3Radio.API.Models
+namespace e3Radio.Data
 {
     public class LastFM
     {

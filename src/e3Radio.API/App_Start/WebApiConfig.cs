@@ -15,7 +15,7 @@ namespace e3Radio.API
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "{controller}/{type}/{id}",
-                defaults: new { id = RouteParameter.Optional }
+                defaults: new { type = RouteParameter.Optional, id = RouteParameter.Optional }
             );
 
             // force json

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 
-namespace e3Radio.API.Models
+namespace e3Radio.Data
 {
     public class Spotify
     {
@@ -15,7 +15,7 @@ namespace e3Radio.API.Models
         /// <param name="db"></param>
         /// <param name="reqUri"></param>
         /// <returns></returns>
-        public static Track GetOrCreateTrackBySpotifyUri(e3RadioEntities db, string reqUri)
+        public static Track GetOrCreateTrackBySpotifyUri(E3RadioEntities db, string reqUri)
         {
             // find existing track, if it has been played before
             var track = db.Tracks.FirstOrDefault(t => t.SpotifyUri == reqUri);

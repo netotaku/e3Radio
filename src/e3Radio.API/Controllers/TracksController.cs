@@ -31,7 +31,7 @@ namespace e3Radio.API.Controllers
             if (results == null)
             {
                 //todo:lock here by cache key
-                using (var db = new e3Radio.API.Models.e3RadioEntities())
+                using (var db = new e3Radio.Data.E3RadioEntities())
                 {
                     db.Configuration.LazyLoadingEnabled = false;
 
@@ -54,7 +54,6 @@ namespace e3Radio.API.Controllers
                                       track.SpotifyUri,
                                       track.LastFmLink,
                                       track.Length,
-                                      track.Popularity,
                                       track.PictureSmall,
                                       track.PictureMedium,
                                       track.PictureLarge,
@@ -101,9 +100,9 @@ namespace e3Radio.API.Controllers
         /// <param name="userId"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        private static IQueryable<Models.Track> GetTracksQueryable(string chart, long userId, Models.e3RadioEntities db)
+        private static IQueryable<e3Radio.Data.Track> GetTracksQueryable(string chart, long userId, e3Radio.Data.E3RadioEntities db)
         {
-            IQueryable<Models.Track> result;
+            IQueryable<e3Radio.Data.Track> result;
 
             // filter and order 
             if (chart == "worst")
@@ -157,6 +156,7 @@ namespace e3Radio.API.Controllers
             {
                 // next queued tracks
                 result = from q in db.Queues
+                         where q.DatePlayed == null
                          orderby q.UpVotes - q.DownVotes descending, q.QueueID
                          select q.Track;
             }
@@ -187,13 +187,13 @@ namespace e3Radio.API.Controllers
             // set user ID to "autoplay" bot for testing purposes when not authed
             if (userId == 0) userId = 1;
 
-            using (var db = new Models.e3RadioEntities())
+            using (var db = new e3Radio.Data.E3RadioEntities())
             {
                 // check user exists in db
                 var u = db.Users.SingleOrDefault(us => us.UserID == userId);
                 if (u == null)
                 {
-                    u = new Models.User();
+                    u = new e3Radio.Data.User();
 
                     // get the dude's info from book of face
                     var fb = new Facebook.Web.FacebookWebClient();
@@ -213,7 +213,7 @@ namespace e3Radio.API.Controllers
                 if (existingLike == null)
                 {
                     // add new
-                    existingLike = new Models.TrackLike();
+                    existingLike = new e3Radio.Data.TrackLike();
                     existingLike.TrackID = id;
                     existingLike.UserID = userId;
                     db.TrackLikes.Add(existingLike);

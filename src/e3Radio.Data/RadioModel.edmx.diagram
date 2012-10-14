@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="e15b7acc74a545f3a27b9b5d3c96b57b" Name="Diagram1">
+        <EntityTypeShape EntityType="e3RadioModel.Queue" Width="1.5" PointX="3" PointY="3.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="e3RadioModel.QueueVote" Width="1.5" PointX="5.25" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="e3RadioModel.Track" Width="1.5" PointX="0.75" PointY="8.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="e3RadioModel.TrackLike" Width="1.5" PointX="6" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="e3RadioModel.TrackPlayed" Width="1.5" PointX="3" PointY="9.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="e3RadioModel.User" Width="1.5" PointX="0.75" PointY="3.5" IsExpanded="true" />
+        <AssociationConnector Association="e3RadioModel.FK_Queue_Track" ManuallyRouted="false" />
+        <AssociationConnector Association="e3RadioModel.FK_Queue_User" ManuallyRouted="false" />
+        <AssociationConnector Association="e3RadioModel.FK_QueueVote_Queue" ManuallyRouted="false" />
+        <AssociationConnector Association="e3RadioModel.FK_QueueVote_User" ManuallyRouted="false" />
+        <AssociationConnector Association="e3RadioModel.FK_TrackLike_Track" ManuallyRouted="false" />
+        <AssociationConnector Association="e3RadioModel.FK_TrackPlayed_Track" ManuallyRouted="false" />
+        <AssociationConnector Association="e3RadioModel.FK_TrackLike_User" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
