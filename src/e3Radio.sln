@@ -24,6 +24,8 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "www", "http://localhost:652
 		SlnRelativePath = "..\www\"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "e3Radio.Data", "e3Radio.Data\e3Radio.Data.csproj", "{C0F797C6-AD72-4111-813D-4C29C8B111D0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{6760DFB6-73C3-4F84-8AB8-AA4E7E889ECF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6760DFB6-73C3-4F84-8AB8-AA4E7E889ECF}.Release|Any CPU.ActiveCfg = Debug|Any CPU
 		{6760DFB6-73C3-4F84-8AB8-AA4E7E889ECF}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{C0F797C6-AD72-4111-813D-4C29C8B111D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0F797C6-AD72-4111-813D-4C29C8B111D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0F797C6-AD72-4111-813D-4C29C8B111D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0F797C6-AD72-4111-813D-4C29C8B111D0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
