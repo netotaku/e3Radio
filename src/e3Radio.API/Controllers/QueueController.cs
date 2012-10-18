@@ -15,28 +15,12 @@ namespace e3Radio.API.Controllers
             {
                 db.Configuration.LazyLoadingEnabled = false;
 
-                return (from q in db.Queues
-                        where q.DatePlayed == null
-                        orderby q.UpVotes - q.DownVotes descending, q.QueueID
-                        let track = q.Track
-                        select new
-                        {
-                            q.QueueID,
-                            q.UpVotes,
-                            q.DownVotes,
-                            q.DateAdded,
-                            track.TrackID,
-                            track.Artist,
-                            track.TrackName,
-                            track.Album,
-                            track.SpotifyUri,
-                            track.LastFmLink,
-                            track.Length,
-                            track.PictureSmall,
-                            track.PictureMedium,
-                            track.PictureLarge,
-                            track.PictureExtraLarge,
-                        }).ToList();
+                var res = from q in db.Queues
+                          where q.DatePlayed == null
+                          orderby q.UpVotes - q.DownVotes descending, q.QueueID
+                          select q;
+                        
+                return e3Radio.Data.QueueManager.FormatQueues(res);
             }
         }
 
@@ -56,99 +40,13 @@ namespace e3Radio.API.Controllers
             // call method to perform requested action
             if (type == "add")
             {
-                AddTrackToQueue(id, userId);
+                e3Radio.Data.QueueManager.AddTrackToQueue(id, userId);
             }
             else
             {
-                VoteOnQueuedTrack(int.Parse(id), userId, type);
+                var qtp = (e3Radio.Data.QueueManager.QueueVoteType)Enum.Parse(typeof(e3Radio.Data.QueueManager.QueueVoteType), type);
+                e3Radio.Data.QueueManager.SaveQueueVote(userId, int.Parse(id), qtp);
             }
         }
-
-        private void VoteOnQueuedTrack(int queueId, long userId, string type)
-        {
-            using (var db = new e3Radio.Data.E3RadioEntities())
-            {
-                // check user exists in db
-                var u = db.Users.SingleOrDefault(us => us.UserID == userId);
-                if (u == null)
-                {
-                    u = new e3Radio.Data.User();
-
-                    // get the dude's info from book of face
-                    var fb = new Facebook.Web.FacebookWebClient();
-                    dynamic me = fb.Get("/me");
-                    u.UserID = userId;
-                    u.Username = me.username ?? me.name;
-                    u.Name = me.name;
-                    u.FacebookLink = me.link;
-                    u.DateCreated = DateTime.Now;
-
-                    db.Users.Add(u);
-                    db.SaveChanges();
-                }
-
-                // add or update queue vote
-                var existingLike = db.QueueVotes.SingleOrDefault(tl => tl.QueueID == queueId && tl.UserID == userId);
-                if (existingLike == null)
-                {
-                    // add new
-                    existingLike = new e3Radio.Data.QueueVote();
-                    existingLike.QueueID = queueId;
-                    existingLike.UserID = userId;
-                    db.QueueVotes.Add(existingLike);
-                }
-                if (type == "unvote")
-                {
-                    // delete the vote
-                    db.QueueVotes.Remove(existingLike);
-                }
-                else
-                {
-                    // add or update
-                    existingLike.IsVoteUp = (type == "voteup");
-                    existingLike.DateVoted = DateTime.Now;
-                }
-                db.SaveChanges();
-            }
-        }
-
-        private void AddTrackToQueue(string spotifyUri, long userId)
-        {
-            using (var db = new e3Radio.Data.E3RadioEntities())
-            {
-                // find existing track, if it has been played before, or add
-                var track = e3Radio.Data.Spotify.GetOrCreateTrackBySpotifyUri(db, spotifyUri);
-                if (track == null)
-                {
-                    throw new Exception("Failed to find Spotify Track");
-                }
-
-                // add to the play queue
-                var queue = new e3Radio.Data.Queue()
-                {
-                    DateAdded = DateTime.Now,
-                    UserID = userId,
-                    Track = track,
-                    UpVotes = 0,
-                    DownVotes = 0
-                };
-                db.Queues.Add(queue);
-
-                // start with 1 vote if added by a human
-                if (userId > 1)
-                {
-                    queue.UpVotes = 1;
-                    queue.QueueVotes.Add(new e3Radio.Data.QueueVote()
-                    {
-                        DateVoted = DateTime.Now,
-                        IsVoteUp = true,
-                        UserID = userId
-                    });
-                }
-
-                db.SaveChanges();
-            }
-        }
-
     }
 }

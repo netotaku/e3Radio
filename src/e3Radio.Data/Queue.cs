@@ -27,8 +27,8 @@ namespace e3Radio.Data
         public System.DateTime DateAdded { get; set; }
         public Nullable<System.DateTime> DatePlayed { get; set; }
     
-        public virtual Track Track { get; set; }
         public virtual User User { get; set; }
         public virtual ICollection<QueueVote> QueueVotes { get; set; }
+        public virtual Track Track { get; set; }
     }
 }

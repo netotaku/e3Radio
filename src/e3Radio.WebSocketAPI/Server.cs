@@ -35,146 +35,74 @@ namespace e3Radio.WebSocketAPI
                 {
                     // when a client sends us a message, forward it to other clients
                     Console.WriteLine(message);
-                    allSockets.ToList().ForEach(s => s.Send(message));  
+                    HandleIncomingMessage(message);
                 };
             });
-
-            // Look for changes in radio data regularly and send to connected clients
-            System.Timers.Timer aTimer = new System.Timers.Timer();
-            aTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnTimedEvent);
-            aTimer.Interval = 5000; // 5 seconds
-            aTimer.Enabled = true;
 
             // Don't exit the program until 'exit' is typed
             Console.WriteLine("Type 'exit' to stop server, or anything else to broadcast a message.");
             var input = Console.ReadLine();
             while (input != "exit")
             {
-                // Broadcast message to users in JSON format
-                var msg = new object[]{new
-                {
-                    type = "chat",
-                    message = input
-                }};
-                var json = Newtonsoft.Json.JsonConvert.SerializeObject(msg);
-                foreach (var socket in allSockets.ToList())
-                {
-                    socket.Send(json);
-                }
+                BroadcastChatMessage(input);
                 input = Console.ReadLine();
             }
         }
 
+        private static void BroadcastChatMessage(string input)
+        {
+            // Broadcast message to users in JSON format
+            var msg = new
+                {
+                    type = "chat",
+                    message = input
+                };
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(msg);
+            allSockets.ToList().ForEach(s => s.Send(json));
+        }
+
         private static void HandleIncomingMessage(string message)
         {
+            // Convert incoming json into a readable format
+            var json = Newtonsoft.Json.JsonConvert.DeserializeXNode("{root:" + message + "}").Element("root");
 
-        }
+            // Get common params
+            string type = (string)json.Element("type");
+            long? userId = (long?)json.Element("userId");
+            int? trackId = (int?)json.Element("trackId");
 
-        // Specify what you want to happen when the Elapsed event is raised.
-        private static bool running;
-        private static void OnTimedEvent(object source, System.Timers.ElapsedEventArgs e)
-        {
-            if (!running)
+            // Update DB if necessary depending on the type
+            switch (type)
             {
-                running = true;
-                using (var db = new e3Radio.Data.E3RadioEntities())
-                {
-                    LookForTrackChanges(db);
-                    LookForRecentLikes(db);
-                    LookForRecentVotes(db);
-                }
-                running = false;
+                case "chat":
+                    //todo: log chat messages?
+                    break;
+                case "love":
+                case "hate":
+                case "unlovehate":
+                    var tp = (e3Radio.Data.TrackManager.TrackVoteType)Enum.Parse(typeof(e3Radio.Data.TrackManager.TrackVoteType), type);
+                    e3Radio.Data.TrackManager.SaveTrackVote(userId.Value, trackId.Value, tp);
+                    break;
+                case "voteup":
+                case "votedown":
+                case "unvote":
+                    var qtp = (e3Radio.Data.QueueManager.QueueVoteType)Enum.Parse(typeof(e3Radio.Data.QueueManager.QueueVoteType), type);
+                    e3Radio.Data.QueueManager.SaveQueueVote(userId.Value, trackId.Value, qtp);
+                    break;
+                case "addtoqueue":
+                    string spotifyUri = (string)json.Element("SpotifyUri");
+                    e3Radio.Data.QueueManager.AddTrackToQueue(spotifyUri, userId.Value);
+                    break;
+                case "nowplaying":
+                    string spotifyUri2 = (string)json.Element("SpotifyUri");
+                    e3Radio.Data.QueueManager.UpdateNowPlayingTrack(spotifyUri2);
+                    break;
             }
+
+            // broadcast this message to all clients so they can show notification
+            allSockets.ToList().ForEach(s => s.Send(message));
         }
 
-        static DateTime lastLikeTime = DateTime.Now;
-        private static void LookForRecentLikes(Data.E3RadioEntities db)
-        {
-            var result = (from likes in db.TrackLikes
-                        where likes.DateLiked > lastLikeTime
-                        orderby likes.DateLiked
-						let track = likes.Track
-						let user = likes.User
-						select new
-						{
-                            type = "trackLike",
-							user.Name,
-							user.UserID,
-							track.Artist,
-							track.TrackName,
-							likes.IsLike,
-							likes.DateLiked
-						}).ToList();
 
-            lastLikeTime = DateTime.Now;
-            if (result.Count > 0)
-            {
-                // broadcast recent likes
-                var json = Newtonsoft.Json.JsonConvert.SerializeObject(result);
-                foreach (var socket in allSockets.ToList())
-                {
-                    socket.Send(json);
-                }
-            }
-        }
-
-        static DateTime lastVoteTime = DateTime.Now;
-        private static void LookForRecentVotes(Data.E3RadioEntities db)
-        {
-            var result = (from likes in db.QueueVotes
-                          where likes.DateVoted > lastVoteTime
-                          orderby likes.DateVoted
-                          let track = likes.Queue.Track
-                          let user = likes.User
-                          select new
-                          {
-                              type = "queueVote",
-                              user.Name,
-                              user.UserID,
-                              track.Artist,
-                              track.TrackName,
-                              likes.IsVoteUp,
-                              likes.DateVoted
-                          }).ToList();
-
-            lastVoteTime = DateTime.Now;
-            if (result.Count > 0)
-            {
-                // broadcast recent likes
-                var json = Newtonsoft.Json.JsonConvert.SerializeObject(result);
-                foreach (var socket in allSockets.ToList())
-                {
-                    socket.Send(json);
-                }
-            }
-        }
-
-        static int currentTrackPlayedID;
-        private static void LookForTrackChanges(e3Radio.Data.E3RadioEntities db)
-        {
-            // Get current playing track
-            var result =
-                (from trackPlays in db.TrackPlayeds
-                 orderby trackPlays.TrackPlayedID descending
-                 select trackPlays).First();
-
-            if (result.TrackPlayedID != currentTrackPlayedID)
-            {
-                currentTrackPlayedID = result.TrackPlayedID;
-                // Broadcast track changed message
-                var msg = new
-                {
-                    type = "trackChanged",
-                    artist = result.Track.Artist,
-                    trackName = result.Track.TrackName,
-                    album = result.Track.Album,
-                };
-                var json = Newtonsoft.Json.JsonConvert.SerializeObject(msg);
-                foreach (var socket in allSockets.ToList())
-                {
-                    socket.Send(json);
-                }
-            }
-        }
     }
 }

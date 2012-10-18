@@ -69,8 +69,7 @@ namespace e3Radio.Data
                 {
                     track.Album = (string)data.Element(ns + "album").Element(ns + "name");
                 }
-                track.Length = (double?)data.Element(ns + "length");
-                track.Popularity = (double?)data.Element(ns + "popularity");
+                track.Length = (int?)data.Element(ns + "length");
                 return true;
             }
             catch

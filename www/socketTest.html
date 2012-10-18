@@ -16,30 +16,29 @@
 
             // when data is comming from the server, this metod is called
             ws.onmessage = function (evt) {
-                // a series of messages can be sent in json - handle each one in turn
+                // messages are sent in json - parse and handle this one
                 var json = JSON.parse(evt.data);
-                for (var i = 0; i < json.length; i++) {
-                    console.log(json[i]);
-                    if (json[i].type == "chat") {
-                        inc.innerHTML += "Chat message: " + json[i].message + '<br/>';
-                    }
-                    else if (json[i].type == "trackChanged") {
-                        inc.innerHTML += "Track changed to: " + json[i].TrackName + ' by ' + json[i].Artist + '<br/>';
-                    }
-                    else if (json[i].type == "trackLike") {
-                        if (json[i].IsLike) {
-                            inc.innerHTML += json[i].Name + ' loves ' + json[i].TrackName + ' by ' + json[i].Artist + '<br/>';
-                        } else {
-                            inc.innerHTML += json[i].Name + ' hates ' + json[i].TrackName + ' by ' + json[i].Artist + '<br/>';
-                        }
-                    }
-                    else if (json[i].type == "queueVote") {
-                        if (json[i].IsVoteUp) {
-                            inc.innerHTML += json[i].Name + ' voted to hear ' + json[i].TrackName + ' by ' + json[i].Artist + '<br/>';
-                        } else {
-                            inc.innerHTML += json[i].Name + ' voted against ' + json[i].TrackName + ' by ' + json[i].Artist + '<br/>';
-                        }
-                    }
+                console.log(json);
+                if (json.type == "chat") {
+                    inc.innerHTML += "Chat message: " + json.message + '<br/>';
+                }
+                else if (json.type == "nowplaying") {
+                    inc.innerHTML += "Track changed to: " + json.TrackName + ' by ' + json.Artist + '<br/>';
+                }
+                else if (json.type == "love") {
+                    inc.innerHTML += json.Name + ' loves ' + json.TrackName + ' by ' + json.Artist + '<br/>';
+                }
+                else if (json.type == "hate") {
+                    inc.innerHTML += json.Name + ' hates ' + json.TrackName + ' by ' + json.Artist + '<br/>';
+                }
+                else if (json.type == "voteup") {
+                    inc.innerHTML += json.Name + ' voted to hear ' + json.TrackName + ' by ' + json.Artist + '<br/>';
+                }
+                else if (json.type == "votedown") {
+                    inc.innerHTML += json.Name + ' voted against ' + json.TrackName + ' by ' + json.Artist + '<br/>';
+                }
+                else if (json.type == "addtoqueue") {
+                    inc.innerHTML += json.Name + ' added to the queue ' + json.TrackName + ' by ' + json.Artist + '<br/>';
                 }
             };
 
@@ -55,8 +54,8 @@
 
             form.addEventListener('submit', function (e) {
                 e.preventDefault();
-                var val = input.value;
-                ws.send(val);
+                var val = { type: 'chat', message: input.value };
+                ws.send(JSON.stringify(val));
                 input.value = "";
             });
 

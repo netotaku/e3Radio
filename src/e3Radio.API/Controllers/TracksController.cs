@@ -41,31 +41,8 @@ namespace e3Radio.API.Controllers
                     // pagination
                     var pagedQuery = filteredQuery.Skip((page - 1) * size).Take(size);
 
-                    // select what we want
-                    var resultQ = from track in pagedQuery
-                                  //let iLike = (bool?)track.TrackLikes.FirstOrDefault(tl => tl.UserID == userId).IsLike
-                                  let TrackLikes = track.TrackLikes.Select(l => new { l.User.Name, l.User.UserID, l.IsLike })
-                                  select new
-                                  {
-                                      track.TrackID,
-                                      track.Artist,
-                                      track.TrackName,
-                                      track.Album,
-                                      track.SpotifyUri,
-                                      track.LastFmLink,
-                                      track.Length,
-                                      track.PictureSmall,
-                                      track.PictureMedium,
-                                      track.PictureLarge,
-                                      track.PictureExtraLarge,
-                                      track.DateAdded,
-                                      track.Likes,
-                                      track.Dislikes,
-                                      //iLike,  // not needed now we have TrackLikes
-                                      TrackLikes
-                                  };
-
-                    results = resultQ.ToList();
+                    // get the data we like in a list
+                    results = e3Radio.Data.TrackManager.FormatTracks(pagedQuery);
                 }
                 System.Web.HttpContext.Current.Cache.Insert(cacheKey, results, null, DateTime.Now.AddSeconds(10), System.Web.Caching.Cache.NoSlidingExpiration);
             }
@@ -115,7 +92,7 @@ namespace e3Radio.API.Controllers
             else if (chart == "most-played")
             {
                 result = from track in db.Tracks
-                         orderby track.TrackPlayeds.Count
+                         orderby track.Queues.Count
                          select track;
             }
             else if (chart == "marmite")
@@ -163,9 +140,10 @@ namespace e3Radio.API.Controllers
             else if (chart == "recent")
             {
                 // most recently played
-                result = from trackPlays in db.TrackPlayeds
-                         orderby trackPlays.TrackPlayedID descending
-                         select trackPlays.Track;
+                result = from q in db.Queues
+                         where q.DatePlayed != null
+                         orderby q.DatePlayed descending
+                         select q.Track;
             }
             else
             {
@@ -177,7 +155,7 @@ namespace e3Radio.API.Controllers
         /// <summary>
         /// Handles vote actions.
         /// </summary>
-        /// <param name="type">love, hate or unvote</param>
+        /// <param name="type">love, hate or unlovehate</param>
         /// <param name="id">a track ID as returned by the track listing</param>
         public void Get(string type, int id)
         {
@@ -187,51 +165,10 @@ namespace e3Radio.API.Controllers
             // set user ID to "autoplay" bot for testing purposes when not authed
             if (userId == 0) userId = 1;
 
-            using (var db = new e3Radio.Data.E3RadioEntities())
-            {
-                // check user exists in db
-                var u = db.Users.SingleOrDefault(us => us.UserID == userId);
-                if (u == null)
-                {
-                    u = new e3Radio.Data.User();
-
-                    // get the dude's info from book of face
-                    var fb = new Facebook.Web.FacebookWebClient();
-                    dynamic me = fb.Get("/me");
-                    u.UserID = userId;
-                    u.Username = me.username ?? me.name;
-                    u.Name = me.name;
-                    u.FacebookLink = me.link;
-                    u.DateCreated = DateTime.Now;
-
-                    db.Users.Add(u);
-                    db.SaveChanges();
-                }
-
-                // add, remove or update track like
-                var existingLike = db.TrackLikes.SingleOrDefault(tl => tl.TrackID == id && tl.UserID == userId);
-                if (existingLike == null)
-                {
-                    // add new
-                    existingLike = new e3Radio.Data.TrackLike();
-                    existingLike.TrackID = id;
-                    existingLike.UserID = userId;
-                    db.TrackLikes.Add(existingLike);
-                }
-                if (type == "unvote")
-                {
-                    // delete the love/hate entry
-                    db.TrackLikes.Remove(existingLike);
-                }
-                else
-                {
-                    // add or update
-                    existingLike.IsLike = (type == "love");
-                    existingLike.DateLiked = DateTime.Now;
-                }
-                db.SaveChanges();
-            }
-
+            // Save.
+            var tp = (e3Radio.Data.TrackManager.TrackVoteType)Enum.Parse(typeof(e3Radio.Data.TrackManager.TrackVoteType), type);
+            e3Radio.Data.TrackManager.SaveTrackVote(userId, id, tp);
         }
+
     }
 }

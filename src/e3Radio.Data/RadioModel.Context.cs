@@ -27,9 +27,8 @@ namespace e3Radio.Data
     
         public DbSet<Queue> Queues { get; set; }
         public DbSet<QueueVote> QueueVotes { get; set; }
-        public DbSet<Track> Tracks { get; set; }
         public DbSet<TrackLike> TrackLikes { get; set; }
-        public DbSet<TrackPlayed> TrackPlayeds { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Track> Tracks { get; set; }
     }
 }
