@@ -1,0 +1,22 @@
+{
+	"BundleType": "Application",
+	"BundleIdentifier": "e3radio",
+	"BundleVersion": "0.1.0",
+	"VendorIdentifier": "uk.co.e3",
+	"AppIcon": {
+		"36x18": "e3Radio.png"
+	},
+	"AppName": {
+		"en": "e3Radio"
+	},
+	"AppDescription": {
+		"en": "To play the e3Radio"
+	},
+	"SupportedLanguages": [
+		"en"
+	],
+	"RequiredPermissions": [ 
+		"http://localhost:50711",
+		"http://radio.e3.co.uk"
+	]
+}
