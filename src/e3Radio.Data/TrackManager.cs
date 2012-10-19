@@ -7,7 +7,7 @@ namespace e3Radio.Data
 {
     public class TrackManager
     {
-        public enum TrackVoteType { love, hate, unlovehate };
+        public enum TrackVoteType { love, hate, unvote };
 
         public static void SaveTrackVote(long userId, int trackId, TrackVoteType type)
         {
@@ -26,7 +26,7 @@ namespace e3Radio.Data
                     existingLike.UserID = userId;
                     db.TrackLikes.Add(existingLike);
                 }
-                if (type == TrackVoteType.unlovehate)
+                if (type == TrackVoteType.unvote)
                 {
                     // delete the love/hate entry
                     db.TrackLikes.Remove(existingLike);
@@ -68,9 +68,61 @@ namespace e3Radio.Data
                         track.DateAdded,
                         track.Likes,
                         track.Dislikes,
+                        track.PlayCount,
+                        track.LastPlayed,
+                        track.RequestDate,
+                        track.RequestUserID,
+                        //track.RequestUser, // causes linq problem
                         //iLike,  // not needed now we have TrackLikes
                         TrackLikes
                     }).ToList();
+        }
+
+        public static void RequestTrack(string spotifyUri, long userId)
+        {
+            using (var db = new e3Radio.Data.E3RadioEntities())
+            {
+                // check user exists in db
+                UserManager.GetOrCreateUser(db, userId);
+
+                // find existing track, if it has been played before, or add
+                var track = e3Radio.Data.Spotify.GetOrCreateTrackBySpotifyUri(db, spotifyUri);
+                if (track == null)
+                {
+                    throw new Exception("Failed to find Spotify Track");
+                }
+
+                // mark it as requested by this user and now, this makes it play sooner
+                track.RequestDate = DateTime.Now;
+                track.RequestUserID = userId;
+
+                db.SaveChanges();
+            }
+        }
+
+        public static void UpdateNowPlayingTrack(string spotifyUri)
+        {
+            using (var db = new e3Radio.Data.E3RadioEntities())
+            {
+                var nowPlayingRow = db.Tracks.FirstOrDefault(r => r.SpotifyUri == spotifyUri);
+                if (nowPlayingRow != null)
+                {
+                    // update now playing track (replacement for last fm scrobbler)
+                    nowPlayingRow.LastPlayed = DateTime.Now;
+
+                    // Wipe any request date to make sure it goes to back of queue
+                    nowPlayingRow.RequestDate = null;
+
+                    // increment play counter
+                    nowPlayingRow.PlayCount++;
+                }
+                else
+                {
+                    //TODO: They played something not in the queue.
+                }
+
+                db.SaveChanges();
+            }
         }
     }
 }

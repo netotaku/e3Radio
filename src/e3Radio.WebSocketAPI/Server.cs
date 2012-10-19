@@ -79,23 +79,17 @@ namespace e3Radio.WebSocketAPI
                     break;
                 case "love":
                 case "hate":
-                case "unlovehate":
+                case "unvote":
                     var tp = (e3Radio.Data.TrackManager.TrackVoteType)Enum.Parse(typeof(e3Radio.Data.TrackManager.TrackVoteType), type);
                     e3Radio.Data.TrackManager.SaveTrackVote(userId.Value, trackId.Value, tp);
                     break;
-                case "voteup":
-                case "votedown":
-                case "unvote":
-                    var qtp = (e3Radio.Data.QueueManager.QueueVoteType)Enum.Parse(typeof(e3Radio.Data.QueueManager.QueueVoteType), type);
-                    e3Radio.Data.QueueManager.SaveQueueVote(userId.Value, trackId.Value, qtp);
-                    break;
                 case "addtoqueue":
                     string spotifyUri = (string)json.Element("SpotifyUri");
-                    e3Radio.Data.QueueManager.AddTrackToQueue(spotifyUri, userId.Value);
+                    e3Radio.Data.TrackManager.RequestTrack(spotifyUri, userId.Value);
                     break;
                 case "nowplaying":
                     string spotifyUri2 = (string)json.Element("SpotifyUri");
-                    e3Radio.Data.QueueManager.UpdateNowPlayingTrack(spotifyUri2);
+                    e3Radio.Data.TrackManager.UpdateNowPlayingTrack(spotifyUri2);
                     break;
             }
 

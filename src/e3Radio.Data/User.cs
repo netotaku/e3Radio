@@ -16,8 +16,7 @@ namespace e3Radio.Data
     {
         public User()
         {
-            this.Queues = new HashSet<Queue>();
-            this.QueueVotes = new HashSet<QueueVote>();
+            this.Tracks = new HashSet<Track>();
             this.TrackLikes = new HashSet<TrackLike>();
         }
     
@@ -27,8 +26,7 @@ namespace e3Radio.Data
         public string FacebookLink { get; set; }
         public System.DateTime DateCreated { get; set; }
     
-        public virtual ICollection<Queue> Queues { get; set; }
-        public virtual ICollection<QueueVote> QueueVotes { get; set; }
+        public virtual ICollection<Track> Tracks { get; set; }
         public virtual ICollection<TrackLike> TrackLikes { get; set; }
     }
 }

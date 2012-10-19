@@ -92,7 +92,7 @@ namespace e3Radio.API.Controllers
             else if (chart == "most-played")
             {
                 result = from track in db.Tracks
-                         orderby track.Queues.Count
+                         orderby track.PlayCount
                          select track;
             }
             else if (chart == "marmite")
@@ -132,18 +132,18 @@ namespace e3Radio.API.Controllers
             else if (chart == "upcoming")
             {
                 // next queued tracks
-                result = from q in db.Queues
-                         where q.DatePlayed == null
-                         orderby q.UpVotes - q.DownVotes descending, q.QueueID
-                         select q.Track;
+                result = from t in db.Tracks
+                         where t.Likes >= t.Dislikes || t.RequestDate != null
+                         orderby t.RequestDate ?? DateTime.MaxValue, t.LastPlayed
+                         select t;
             }
             else if (chart == "recent")
             {
                 // most recently played
-                result = from q in db.Queues
-                         where q.DatePlayed != null
-                         orderby q.DatePlayed descending
-                         select q.Track;
+                result = from t in db.Tracks
+                         where t.LastPlayed != null
+                         orderby t.LastPlayed descending
+                         select t;
             }
             else
             {
@@ -155,7 +155,7 @@ namespace e3Radio.API.Controllers
         /// <summary>
         /// Handles vote actions.
         /// </summary>
-        /// <param name="type">love, hate or unlovehate</param>
+        /// <param name="type">love, hate or unvote</param>
         /// <param name="id">a track ID as returned by the track listing</param>
         public void Get(string type, int id)
         {

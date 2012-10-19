@@ -19,7 +19,7 @@ namespace e3Radio.Data
         public bool IsLike { get; set; }
         public System.DateTime DateLiked { get; set; }
     
-        public virtual User User { get; set; }
         public virtual Track Track { get; set; }
+        public virtual User User { get; set; }
     }
 }

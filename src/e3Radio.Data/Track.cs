@@ -16,7 +16,6 @@ namespace e3Radio.Data
     {
         public Track()
         {
-            this.Queues = new HashSet<Queue>();
             this.TrackLikes = new HashSet<TrackLike>();
         }
     
@@ -35,10 +34,12 @@ namespace e3Radio.Data
         public int Dislikes { get; set; }
         public string SpotifyUri { get; set; }
         public Nullable<int> Length { get; set; }
-        public Nullable<int> PlayCount { get; set; }
+        public int PlayCount { get; set; }
         public Nullable<System.DateTime> LastPlayed { get; set; }
+        public Nullable<long> RequestUserID { get; set; }
+        public Nullable<System.DateTime> RequestDate { get; set; }
     
-        public virtual ICollection<Queue> Queues { get; set; }
+        public virtual User User { get; set; }
         public virtual ICollection<TrackLike> TrackLikes { get; set; }
     }
 }
