@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="e15b7acc74a545f3a27b9b5d3c96b57b" Name="Diagram1" ZoomLevel="85">
+        <EntityTypeShape EntityType="e3RadioModel.Track" Width="1.5" PointX="10.081855231002837" PointY="13.058294764281389" />
+        <EntityTypeShape EntityType="e3RadioModel.TrackLike" Width="1.5" PointX="6.577807721950955" PointY="24.098026286856282" />
+        <EntityTypeShape EntityType="e3RadioModel.User" Width="1.5" PointX="3.4925166533759406" PointY="28.59172548194962" />
+        <AssociationConnector Association="e3RadioModel.FK_Track_User" />
+        <AssociationConnector Association="e3RadioModel.FK_TrackLike_Track" />
+        <AssociationConnector Association="e3RadioModel.FK_TrackLike_User" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

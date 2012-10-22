@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="sp://import/css/adam.css" />
+  <link rel="stylesheet" href="sp://import/css/api.css" />
+  <script type="text/javascript" src="jquery-1.8.2.min.js"></script>
+  <script type="text/javascript" src="e3radio.js"></script>
+</head>
+<body>
+
+<h1>e3Radio player</h1>
+<p>To influence the queue, visit <a href="http://radio.e3.co.uk/">e3Radio</a>.</p>
+
+<h2>Controls</h2>
+<p>When enabled, at the end of each track the next track from the e3Radio queue will be played.</p>
+<input type="button" class="sp-button" id="btnEnable" value="Enable e3Radio" onclick="enableDisable()" />
+
+<p>If there is nothing playing when you enable, use this button to start with the first track:</p>
+<input type="button" class="sp-button" value="Play next track in e3Radio queue" onclick="playNextTrack()" />
+You can also use it to skip a track.
+
+<h2>Now playing</h2>
+<div id="nowPlaying">n/a</div>
+
+<h2>Upcoming tracks</h2>
+<div id="upcoming">n/a</div>
+
+<h2>Recently added automatically</h2>
+<div id="recentlyAdded">n/a</div>
+
+</body>
+</html>
