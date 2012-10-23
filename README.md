@@ -1,29 +1,3 @@
-
-## messaging:
-
-# Socket
-
-> {
->	event: 'init-playQueue',
->	data: [ ... tracks ... ]
-> }
-
-> {
-> 	event: 'add-request',
-> 	data: [ ... tracks ... ]
-> }
-
-> {
-> 	event: 'move-playhead'
-> }
-
-# Events
-
-> {
-> 	event: 'draw-chart',
->	data: [ ... tracks ... ] 	
-> }
-
 e3Radio 2.0 1st Release
 ====================
 
@@ -84,5 +58,19 @@ latest IE, Chrome, Safari, Safari mobile, chrome mobile, with experience optimis
 * graphs
 
 # 3rd 
-# charts
-# notifications
+* charts
+* notifications
+
+Messaging
+---------------------
+
+# Socket
+
+> { event: 'init-playQueue', data: [ ... tracks ... ] }
+> { event: 'add-request', data: [ ... tracks ... ] }
+> { event: 'move-playhead' }
+
+# Events
+
+> { event: 'draw-chart', data: [ ... tracks ... ] }
+
