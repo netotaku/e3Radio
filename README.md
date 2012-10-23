@@ -19,7 +19,6 @@ The application consists of a continuos circular buffer of 'tracks'
 3. Play back is stopped
 ---------------------
 
-* The remaining PQ will be added back to the UP 
 * user can add requests directly to a colaborative playlist on spotify
 
 User Stories
