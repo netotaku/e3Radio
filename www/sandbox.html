@@ -135,8 +135,11 @@
             this.draw();
           },
           playQueue.prototype.draw = function(){
-            var self = this;
-            page.set('chart', { tracks: self.tracks });
+            var that = this;
+            channel.publish({
+              event: 'draw-chart',
+              data: that.tracks
+            });
           }
 
           new playQueue;
@@ -160,6 +163,24 @@
               }
             }
           })();
+
+          //////////////////////////////////////////////////////////
+
+          var chart = function(){
+
+            channel.subscribe(this, {
+              event: 'draw-chart',
+              cb: function(data){
+                this.draw(data);
+              }
+            })
+
+          };
+          chart.prototype.draw = function(data){
+            page.set('chart', { tracks: data });
+          }
+
+          new chart;
 
         </script>
 

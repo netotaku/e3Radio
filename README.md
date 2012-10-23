@@ -1,6 +1,8 @@
 
 ## messaging:
 
+# Socket
+
 > {
 >	event: 'init-playQueue',
 >	data: [ ... tracks ... ]
@@ -15,29 +17,30 @@
 > 	event: 'move-playhead'
 > }
 
+# Events
+
+> {
+> 	event: 'draw-chart',
+>	data: [ ... tracks ... ] 	
+> }
 
 e3Radio 2.0 1st Release
 ====================
 
-The application consists of 2 sacks
-
-The play queue, ( PQ ) 
-* Reflects the users requests that are about to be played. 
-
-The ultimate playlist, ( UP ) 
-* Reflects the requests that have been played and have positive or neutral karma. 
+The application consists of a continuos circular buffer of 'tracks' 
 
 1. Play back commences
 ---------------------
 
-* UP is emptied into PQ
+* 'play head (PH)' is set to the track played longest ago
+* the 'play queue (PQ)' is ordered by 'last played (LP)' ascending 
 
 2. During play back
 ---------------------
 
 * The user may vote up or down any track in the PQ up to the point the track has finished playing
 * The user may request songs to be added to the PQ
-* At the point a track finishes playing if it has attained neutral or positive karma it will be popped on to the UP stack otherwise it will be discarded, Discarded tracks can be requested again. 
+* At the point a track finishes playing if it has attained neutral or positive karma it will remain in the PQ and played the next time it becomes the last played. Otherwise it will be discarded, Discarded tracks can be requested again. 
 
 3. Play back is stopped
 ---------------------
@@ -67,9 +70,19 @@ The user must be able to:
 ## Browsers
 latest IE, Chrome, Safari, Safari mobile, chrome mobile, with experience optimised for desktop, tablet and mobile
 
-We need to split this up into technical iterations.
+## Iterations
 
-## 2nd release
-* desktop notifications
-* charts
-* click to play in spotify 
+# 1st
+* Requests
+* Sockets ( see messaging section )
+* facebook
+* basic experience for lesser browsers
+
+# 2nd
+* voting
+* track detail
+* graphs
+
+# 3rd 
+# charts
+# notifications
