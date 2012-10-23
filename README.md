@@ -67,7 +67,9 @@ Messaging
 # Socket
 
 > { event: 'init-playQueue', data: [ ... tracks ... ] }
+>
 > { event: 'add-request', data: [ ... tracks ... ] }
+>
 > { event: 'move-playhead' }
 
 # Events
