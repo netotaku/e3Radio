@@ -27,6 +27,11 @@
             </menu> 
             <%= logo %>
           </header>
+          <div id="request">
+            <form>
+              <input type="text" name="request" placeholder="Democratically building the ultimate e3 playlist...">
+            </form>
+          </div>
         </script>
 
         <script type="text/html" id="chart">
@@ -131,7 +136,10 @@
             this.draw();
           }
           playQueue.prototype.add = function(data){
-            this.tracks.splice(1, 0, data[0]);
+            var that = this;
+            $.each(data, function(){
+              that.tracks.splice(1, 0, this);
+            });
             this.draw();
           },
           playQueue.prototype.draw = function(){
@@ -181,6 +189,43 @@
           }
 
           new chart;
+
+          //////////////////////////////////////////////////////////
+
+
+          channel.subscribe(this, {
+            event: 'draw-chart',
+            cb: function(){
+
+             $('[placeholder]').each(function(){
+               var $ths = $(this),
+                    scrpt = $ths.attr('placeholder') + '        ',
+                    chr, str, reset = function() {
+                      str = ' > ';
+                      chr = 0;
+                    },
+                    set = function() {
+                      if (scrpt[chr]) {
+                        str += scrpt[chr++];
+                      } else {
+                        reset();
+                      }
+                      $ths.attr('placeholder', str);
+                    },
+                    tck = function() {
+                      setTimeout(function() {
+                        set();
+                        tck();
+                      }, 200);
+                    };
+
+                reset();
+                set();
+                tck();
+  
+              });
+            }
+          });  
 
         </script>
 

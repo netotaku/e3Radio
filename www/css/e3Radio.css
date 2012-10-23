@@ -162,21 +162,25 @@ article{
 
 footer{
 	padding: 10px;
+	padding-bottom: 50px;
 	border-top: 1px dotted #ccc;
 	text-align: right;
 }
 
 
-.search{
+#request{
 	position: relative;
 	padding: 10px;
 	border-bottom: 1px dotted #ccc;	
 }
 
-.search form input{
+#request form input{
 	border: solid 1px #ccc;
 	padding: 5px;
-	width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
 }
 
 
