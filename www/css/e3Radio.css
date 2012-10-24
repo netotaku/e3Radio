@@ -107,7 +107,7 @@ article{
 
 #tracks li p{
 	height: 188px;
-	background-color: #eee;
+	background: #eee url(../img/blank.png) no-repeat center;
 	margin-right: 10px;
 	background-size: cover;
 	position: relative;

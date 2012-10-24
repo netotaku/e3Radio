@@ -40,7 +40,7 @@
               var i = 1;
               $.each(tracks, function(){ %>
               <li data-track-id="<%= this.TrackID %>">
-                <p style="background-image: <%= this.PictureExtraLarge ? 'url(' + this.PictureExtraLarge +')' : 'none' %>" data-id="<%= this.TrackPlayedID %>">
+                <p style=" <%= this.PictureExtraLarge ? 'background-image: url(' + this.PictureExtraLarge +')' : '' %>" data-id="<%= this.TrackPlayedID %>">
                   <span class="number"><%= i++ %></span>
                   <span class="info">
                     <span class="artist"><em><%= this.Artist %></em></span>
