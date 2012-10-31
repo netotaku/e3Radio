@@ -11,6 +11,7 @@
         <div class="wrapper">
           <div id="e3r"></div>
         </div> 
+        <div id="modal"></div>
 
         <!-- templates -->
 
@@ -83,11 +84,11 @@
             return {
               publish: function(e){
                 $.each(stack, function(){
-                  if(this.event == e.event){
+                  if(this.event.search(e.event) > -1){
                     this.cb.call(this.inst, e.data);
                   }
                 })
-              } ,
+              },
               subscribe: function(i, data){
                 stack.push(_.extend({
                   inst: i
@@ -102,6 +103,7 @@
           var playQueue = function(){
 
             this.tracks;
+            var that = this;
 
             channel.subscribe(this, {
               event: 'init-playQueue',
@@ -126,36 +128,50 @@
 
           }
           playQueue.prototype.pop = function(){
-            this.tracks.reverse();
+            // console.log('pop');
+            this.tracks.reverse();  
             this.tracks.pop();
             this.tracks.reverse();
-            this.draw();
+            this.finished();
           } 
           playQueue.prototype.ini = function(data){
             this.tracks = data;
-            this.draw();
+            this.finished();
           }
           playQueue.prototype.add = function(data){
+            // console.log('add');
             var that = this;
             $.each(data, function(){
               that.tracks.splice(1, 0, this);
             });
-            this.draw();
-          },
-          playQueue.prototype.draw = function(){
+            this.finished();
+          }
+          playQueue.prototype.finished = function(){
             var that = this;
-            channel.publish({
-              event: 'draw-chart',
-              data: that.tracks
-            });
+            channel.publish({ event: 'after-playQueueUpdate', data: that.tracks });
           }
 
           new playQueue;
 
           //////////////////////////////////////////////////////////
 
-          var page = (function(){
+          var modal = function(){
 
+            this.$inst = $('#modal');
+
+            channel.subscribe(this, {
+              event: 'after-chartDraw',
+              cb: function(){
+                this.$inst.hide();
+              }
+            });
+
+          };
+
+          new modal;
+
+          var page = (function(){
+         
             var t = function(id, data){
               return _.template($('#'+id).html(), data || {});
             }
@@ -177,7 +193,7 @@
           var chart = function(){
 
             channel.subscribe(this, {
-              event: 'draw-chart',
+              event: 'after-playQueueUpdate',
               cb: function(data){
                 this.draw(data);
               }
@@ -186,15 +202,17 @@
           };
           chart.prototype.draw = function(data){
             page.set('chart', { tracks: data });
+            channel.publish({
+              event: 'after-chartDraw'
+            })
           }
 
           new chart;
 
           //////////////////////////////////////////////////////////
 
-
           channel.subscribe(this, {
-            event: 'draw-chart',
+            event: 'after-chartDraw',
             cb: function(){
 
              $('[placeholder]').each(function(){

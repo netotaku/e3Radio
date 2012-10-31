@@ -1,4 +1,8 @@
 
+body, html{
+	height: 100%;
+}
+
 .clear{
 	clear: both;
 }
@@ -230,6 +234,16 @@ footer{
 .settings li{
 	display: inline;
 }
+
+#modal{
+	position: fixed;
+	height: 100%;
+	width: 100%;
+	background: rgba(0,0,0,0.5); /*url(../img/spin.gif) no-repeat center center*/
+	top: 0px;
+	left: 0px;
+}
+
 
 /* #Media Queries
 ================================================== */
