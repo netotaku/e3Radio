@@ -35,29 +35,27 @@
           </div>
         </script>
 
+        <script type="text/html" id="track">
+            <li data-track-id="<%= TrackID %>">
+              <p style=" <%= PictureExtraLarge ? 'background-image: url(' + PictureExtraLarge +')' : '' %>" data-id="">
+                <span class="number"><%= i %></span>
+                <span class="info">
+                  <span class="artist"><em><%= Artist %></em></span>
+                  <span class="title"><em><%= TrackName %></em></span>
+                </span>
+              </p>
+            </li>
+        </script>
+
         <script type="text/html" id="chart">
-          <ul id="tracks">
-            <% 
-              var i = 1;
-              $.each(tracks, function(){ %>
-              <li data-track-id="<%= this.TrackID %>">
-                <p style=" <%= this.PictureExtraLarge ? 'background-image: url(' + this.PictureExtraLarge +')' : '' %>" data-id="<%= this.TrackPlayedID %>">
-                  <span class="number"><%= i++ %></span>
-                  <span class="info">
-                    <span class="artist"><em><%= this.Artist %></em></span>
-                    <span class="title"><em><%= this.TrackName %></em></span>
-                  </span>
-                </p>
-              </li>
-            <% }) %>
-          </ul>
+          <ul id="tracks"></ul>
         </script>
 
         <script type="text/html" id="page">
           <%= header %>
           <div class="content">
             <article>
-              <%= article %>  
+              <div id="content"></div>
               <div class="clear"></div>
             </article>
           </div>
@@ -136,6 +134,7 @@
           } 
           playQueue.prototype.ini = function(data){
             this.tracks = data;
+            this.initialised();
             this.finished();
           }
           playQueue.prototype.add = function(data){
@@ -148,7 +147,15 @@
           }
           playQueue.prototype.finished = function(){
             var that = this;
-            channel.publish({ event: 'after-playQueueUpdate', data: that.tracks });
+            channel.publish({ 
+              event: 'after-playQueueUpdate', 
+              data: that.tracks 
+            });
+          }
+          playQueue.prototype.initialised = function(){
+            channel.publish({ 
+              event: 'playQueue-initialised'
+            });
           }
 
           new playQueue;
@@ -170,23 +177,41 @@
 
           new modal;
 
-          var page = (function(){
-         
-            var t = function(id, data){
-              return _.template($('#'+id).html(), data || {});
-            }
+          //////////////////////////////////////////////////////////
 
-            return {
-              set: function(id, data){
-                var logo = { logo: t('logo') };
-                $('#e3r').html(t('page', $.extend({}, {
-                  header: t('header', $.extend(data, logo)),
-                  article: t(id, data || {}),
-                  footer: t('footer')
-                })));
+          var page = function(){
+            channel.subscribe(this, {
+              event: 'playQueue-initialised',
+              cb: function(){
+                this.chrome();
               }
-            }
-          })();
+            })
+          }
+          page.prototype.chrome = function(){
+            var t = this;
+            var logo = { logo: t.t('logo') };
+            $('#e3r').empty().html(t.t('page', $.extend({}, {
+              header: t.t('header', logo),
+              footer: t.t('footer')
+            })));
+            channel.publish({
+              event: 'after-chrome'
+            })
+          }
+          page.prototype.t = function(id, data){
+            return _.template($('#'+id).html(), data || {});
+          }
+
+          new page;
+
+          //////////////////////////////////////////////////////////
+
+          var track = function(data){
+            this.data = data;
+          }
+          track.prototype.html = function(){
+            return _.template($('#track').html(), this.data);
+          }
 
           //////////////////////////////////////////////////////////
 
@@ -199,9 +224,16 @@
               }
             })
 
-          };
+          }
           chart.prototype.draw = function(data){
-            page.set('chart', { tracks: data });
+            var $ul = $($('#chart').html()).appendTo($('#content').empty());
+            var i = 1;
+
+            $.each(data, function(){
+              var t = new track($.extend(this, { i: i++ }));
+              $ul.append(t.html());
+            });
+
             channel.publish({
               event: 'after-chartDraw'
             })
@@ -212,7 +244,7 @@
           //////////////////////////////////////////////////////////
 
           channel.subscribe(this, {
-            event: 'after-chartDraw',
+            event: 'after-chrome',
             cb: function(){
 
              $('[placeholder]').each(function(){
