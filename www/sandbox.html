@@ -11,6 +11,18 @@
         <div class="wrapper">
           <div id="e3r"></div>
         </div> 
+        
+        <div class="settings">
+          <div class="tab"></div>
+          <div class="inner">
+            <ul>
+              <li>Messages | </li>
+              <li><a data-role="add" href="#">add-request</a> | </li>
+              <li><a data-role="pop" href="#">move-playhead</a></li>
+            </ul>
+          </div>
+        </div>
+        
         <div id="modal"></div>
 
         <!-- templates -->
@@ -35,12 +47,79 @@
           </div>
         </script>
 
+<!--
+  {
+    "PictureSmall": "http://userserve-ak.last.fm/serve/34s/57090809.png",
+    "PictureMedium": "http://userserve-ak.last.fm/serve/64s/57090809.png",
+    "PictureLarge": "http://userserve-ak.last.fm/serve/126/57090809.png",
+    "PictureExtraLarge": "http://userserve-ak.last.fm/serve/300x300/57090809.png",
+    "DateAdded": "2012-01-12T10:28:27.423",
+    "Likes": 4,
+    "Dislikes": 1,
+    "PlayCount": 3,
+    "LastPlayed": "2012-10-01T10:46:29.39",
+    "RequestDate": null,
+    "RequestUserID": null,
+  
+  },
+-->
+
         <script type="text/html" id="track-detail">
-          <div class="detail">Track / <%= TrackID %></div>
-          <span class="info">
-            <span class="artist"><em><%= Artist %></em></span>
-            <span class="title"><em><%= TrackName %></em></span>
-          </span>
+            
+          <%
+              
+              var perc = 100/(Likes + Dislikes);
+              var likesW = perc * Likes;
+              var dislikesW = perc * Dislikes;
+              
+          %>  
+
+          <div class="track-detail">
+            
+            <div class="row">
+              <h3><%= TrackName %></h3>
+              <h4><%= Artist %></h4>
+            </div>
+
+            <div class="col">
+              <h5>Summary</h5>
+
+              <table>
+                <tr>
+                  <th>Likes</th>
+                  <td><div class="bar likes" style="width: <%= likesW %>%"></div></td>
+                </tr>
+                <tr>
+                  <th>Dislikes</th>
+                  <td><div class="bar dislikes" style="width: <%= dislikesW %>%"></div></td>
+                </tr>
+                <tr>
+                  <th>Karma</th>
+                  <td><%= Likes - Dislikes %></td>
+                </tr>                
+                <tr>
+                  <th>Plays</th>
+                  <td><%= PlayCount %></td>
+                </tr>                
+              </table>
+              <div class="externals">  
+                <p><a href="<%= SpotifyUri %>">Play in Spotify</a></p>
+                <p><a href="<%= LastFmLink %>">View on last.fm</a></p>
+                <p>Last played <%= LastPlayed %></p>
+              </div>
+            </div>
+
+            <div class="col">
+              <h5>Activity</h5>
+              <ul>
+                <% $.each(TrackLikes, function(){ %>
+                  <li><%= this.IsLike ? 'Liked' : 'Disliked' %> by <em><%= this.Name %></em></li>
+                <% }); %>
+                <li><span class="date">Requested by <em>Someone</em> on <%= DateAdded %></li>
+              </ul>
+            </div>
+
+          </div>          
         </script>
 
         <script type="text/html" id="track-list">
@@ -103,12 +182,29 @@
               unsubscribe: function(obj, event){
                 var i = 0;
                 for(o in stack){
-                  if(o.inst == obj){ 
+                  if(stack[o].inst == obj){
                     stack.splice(i, 1);
                   }
                   i++;
                 }
               } 
+            }
+
+          })();
+
+          /////////////////////////////////
+
+          var socket = (function(){
+
+            return {
+              fetch: function(){
+                $.getJSON('data/playQueue.json', function(data){
+                  channel.publish({
+                    event: 'init-playQueue',
+                    data: data
+                  });
+                });
+              }
             }
 
           })();
@@ -143,7 +239,6 @@
 
           }
           playQueue.prototype.pop = function(){
-            // console.log('pop');
             this.tracks.reverse();  
             this.tracks.pop();
             this.tracks.reverse();
@@ -155,7 +250,6 @@
             this.finished();
           }
           playQueue.prototype.add = function(data){
-            // console.log('add');
             var that = this;
             $.each(data, function(){
               that.tracks.splice(1, 0, this);
@@ -178,18 +272,10 @@
             if(this.tracks){
               this.finished();
             } else {
-              $.getJSON('data/playQueue.json', function(data){
-                channel.publish({
-                  event: 'init-playQueue',
-                  data: data
-                });
-              });
+              socket.fetch();
             }
           }
-          playQueue.prototype.trackByID = function(id){
-
-          }
-
+          
           //////////////////////////////////////////////////////////
 
           var modal = function(){
@@ -235,6 +321,10 @@
 
           //////////////////////////////////////////////////////////
 
+          var superTrack = function(){
+
+          }
+
           var track = function(data){
             this.id;
             this.data = data;
@@ -248,6 +338,7 @@
             channel.publish({
               event: 'after-draw'
             });
+            this.unbind();
           }
           track.prototype.bind = function(id){
             channel.subscribe(this, {
@@ -352,13 +443,13 @@
 
           ///////////////////////////
 
-          RTR.on('route:track', function (id) {
+          RTR.on('route:track', function(id) {
             CHT.unbind();
             TRK.bind(id);
             PLQ.fetch();
           });
 
-          RTR.on('route:defaultRoute', function (actions) {
+          RTR.on('route:defaultRoute', function(actions) {
             CHT.bind();
             TRK.unbind();
             PLQ.fetch();
@@ -367,6 +458,5 @@
           Backbone.history.start();           
 
         </script>
-
     </body>
 </html>

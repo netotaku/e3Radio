@@ -3,6 +3,10 @@ body, html{
 	height: 100%;
 }
 
+h1{
+	cursor: pointer;
+}
+
 .clear{
 	clear: both;
 }
@@ -107,6 +111,7 @@ article{
 	float: left;
 	width: 20%;
 	padding-bottom: 10px;
+	cursor: pointer;
 }
 
 #tracks li p{
@@ -187,7 +192,80 @@ footer{
     -webkit-box-sizing: border-box;
 }
 
+.track-detail{
+	padding: 10px;
+}
 
+.track-detail h3{
+	font-size: 42px;
+	padding-bottom: 5px;
+}
+
+.track-detail h4{
+	font-size: 26px;
+}
+
+.track-detail .col{
+	width: 50%;
+	float: left;
+	padding-right: 10px;
+	box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+.track-detail .bar{
+	height: 20px;
+	width: 50%;
+}
+
+.track-detail .likes{
+	background: blue;
+}
+
+.track-detail .dislikes{
+	background: red;
+}
+
+.track-detail table{
+	width: 100%;
+	margin-bottom: 20px;
+	background: #eee;
+	border: solid 10px #eee;
+	border-bottom: 0px;
+}
+
+.track-detail table th{
+	width: 80px;
+}
+
+.track-detail table th,
+.track-detail table td{
+	padding-bottom: 10px;
+}
+
+.track-detail h5{
+	padding-bottom: 10px;
+	font-weight: bold;
+}
+
+.track-detail .row{
+	padding-bottom: 20px;
+}
+
+.track-detail .externals{
+	padding-bottom: 20px;
+}
+
+.track-detail ul{
+	margin-bottom: 20px;
+	border-top: dotted #ccc 1px;	
+}
+
+.track-detail ul li{
+	padding: 10px;
+	border-bottom: dotted #ccc 1px;
+}
 
 /****** settings **********/
 
@@ -298,6 +376,10 @@ footer{
 		}
 		#tracks li p{
 			height: 380px;
+		}
+		.track-detail .col{
+			width: auto;
+			float: none;
 		}
 
 	}
