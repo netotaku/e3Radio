@@ -36,7 +36,11 @@
         </script>
 
         <script type="text/html" id="track-detail">
-
+          <div class="detail">Track / <%= TrackID %></div>
+          <span class="info">
+            <span class="artist"><em><%= Artist %></em></span>
+            <span class="title"><em><%= TrackName %></em></span>
+          </span>
         </script>
 
         <script type="text/html" id="track-list">
@@ -232,27 +236,34 @@
           //////////////////////////////////////////////////////////
 
           var track = function(data){
+            this.id;
             this.data = data;
           }
           track.prototype.html = function(view){
             return _.template($('#track-'+view).html(), this.data);
           }
-          track.prototype.draw = function(){
-            $('#content').empty();
+          track.prototype.draw = function(data, id){
+            this.data = this.byID(data, id);
+            $('#content').empty().html(this.html('detail'));
             channel.publish({
               event: 'after-draw'
             });
           }
-          track.prototype.bind = function(){
+          track.prototype.bind = function(id){
             channel.subscribe(this, {
               event: 'after-playQueueUpdate',
               cb: function(data){
-                this.draw(data);
+                this.draw(data, id);
               }
             });
           }
           track.prototype.unbind = function(){
             channel.unsubscribe(this);
+          }
+          track.prototype.byID = function(data, id){
+            for(var i = 0; i < data.length; i++){
+              if(data[i].TrackID == id) return data[i];
+            }
           }
 
           //////////////////////////////////////////////////////////
@@ -325,6 +336,14 @@
 
           ///////////////////////////
 
+          var router = Backbone.Router.extend({
+            routes: {
+              "track/:id": "track",
+              "*actions": "defaultRoute"
+            }
+          });
+          
+          var RTR = new router;
           var PLQ = new playQueue;
           var MDL = new modal;
           var PGE = new page;
@@ -333,24 +352,17 @@
 
           ///////////////////////////
 
-          var AppRouter = Backbone.Router.extend({
-            routes: {
-              "track/:id": "track",
-              "*actions": "defaultRoute" // Backbone will try match the route above first
-            }
+          RTR.on('route:track', function (id) {
+            CHT.unbind();
+            TRK.bind(id);
+            PLQ.fetch();
           });
-          // Instantiate the router
-          var app_router = new AppRouter;
-              app_router.on('route:track', function (id) {
-                CHT.unbind();
-                TRK.bind();
-                PLQ.fetch();
-              });
-              app_router.on('route:defaultRoute', function (actions) {
-                CHT.bind();
-                TRK.unbind();
-                PLQ.fetch();
-              });
+
+          RTR.on('route:defaultRoute', function (actions) {
+            CHT.bind();
+            TRK.unbind();
+            PLQ.fetch();
+          });
           
           Backbone.history.start();           
 
