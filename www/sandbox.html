@@ -35,7 +35,11 @@
           </div>
         </script>
 
-        <script type="text/html" id="track">
+        <script type="text/html" id="track-detail">
+
+        </script>
+
+        <script type="text/html" id="track-list">
             <li data-track-id="<%= TrackID %>">
               <p style=" <%= PictureExtraLarge ? 'background-image: url(' + PictureExtraLarge +')' : '' %>" data-id="">
                 <span class="number"><%= i %></span>
@@ -91,7 +95,16 @@
                 stack.push(_.extend({
                   inst: i
                 }, data));
-              }
+              },
+              unsubscribe: function(obj, event){
+                var i = 0;
+                for(o in stack){
+                  if(o.inst == obj){ 
+                    stack.splice(i, 1);
+                  }
+                  i++;
+                }
+              } 
             }
 
           })();
@@ -157,8 +170,21 @@
               event: 'playQueue-initialised'
             });
           }
+          playQueue.prototype.fetch = function(cb){
+            if(this.tracks){
+              this.finished();
+            } else {
+              $.getJSON('data/playQueue.json', function(data){
+                channel.publish({
+                  event: 'init-playQueue',
+                  data: data
+                });
+              });
+            }
+          }
+          playQueue.prototype.trackByID = function(id){
 
-          new playQueue;
+          }
 
           //////////////////////////////////////////////////////////
 
@@ -167,7 +193,7 @@
             this.$inst = $('#modal');
 
             channel.subscribe(this, {
-              event: 'after-chartDraw',
+              event: 'after-draw',
               cb: function(){
                 this.$inst.hide();
               }
@@ -175,11 +201,12 @@
 
           };
 
-          new modal;
-
           //////////////////////////////////////////////////////////
 
           var page = function(){
+            $('h1').live('click', function(){
+              Backbone.history.navigate('', true); 
+            });
             channel.subscribe(this, {
               event: 'playQueue-initialised',
               cb: function(){
@@ -202,28 +229,38 @@
             return _.template($('#'+id).html(), data || {});
           }
 
-          new page;
-
           //////////////////////////////////////////////////////////
 
           var track = function(data){
             this.data = data;
           }
-          track.prototype.html = function(){
-            return _.template($('#track').html(), this.data);
+          track.prototype.html = function(view){
+            return _.template($('#track-'+view).html(), this.data);
           }
-
-          //////////////////////////////////////////////////////////
-
-          var chart = function(){
-
+          track.prototype.draw = function(){
+            $('#content').empty();
+            channel.publish({
+              event: 'after-draw'
+            });
+          }
+          track.prototype.bind = function(){
             channel.subscribe(this, {
               event: 'after-playQueueUpdate',
               cb: function(data){
                 this.draw(data);
               }
-            })
+            });
+          }
+          track.prototype.unbind = function(){
+            channel.unsubscribe(this);
+          }
 
+          //////////////////////////////////////////////////////////
+
+          var chart = function(){
+            $('#tracks li').live('click', function(){
+              Backbone.history.navigate('track/' + $(this).data('track-id'), true); 
+            });
           }
           chart.prototype.draw = function(data){
             var $ul = $($('#chart').html()).appendTo($('#content').empty());
@@ -231,15 +268,24 @@
 
             $.each(data, function(){
               var t = new track($.extend(this, { i: i++ }));
-              $ul.append(t.html());
+              $ul.append(t.html('list'));
             });
 
             channel.publish({
-              event: 'after-chartDraw'
+              event: 'after-draw'
             })
           }
-
-          new chart;
+          chart.prototype.bind = function(){
+            channel.subscribe(this, {
+              event: 'after-playQueueUpdate',
+              cb: function(data){
+                this.draw(data);
+              }
+            });
+          }
+          chart.prototype.unbind = function(){
+            channel.unsubscribe(this);
+          }
 
           //////////////////////////////////////////////////////////
 
@@ -275,7 +321,38 @@
   
               });
             }
-          });  
+          }); 
+
+          ///////////////////////////
+
+          var PLQ = new playQueue;
+          var MDL = new modal;
+          var PGE = new page;
+          var CHT = new chart;
+          var TRK = new track;
+
+          ///////////////////////////
+
+          var AppRouter = Backbone.Router.extend({
+            routes: {
+              "track/:id": "track",
+              "*actions": "defaultRoute" // Backbone will try match the route above first
+            }
+          });
+          // Instantiate the router
+          var app_router = new AppRouter;
+              app_router.on('route:track', function (id) {
+                CHT.unbind();
+                TRK.bind();
+                PLQ.fetch();
+              });
+              app_router.on('route:defaultRoute', function (actions) {
+                CHT.bind();
+                TRK.unbind();
+                PLQ.fetch();
+              });
+          
+          Backbone.history.start();           
 
         </script>
 

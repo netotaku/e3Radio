@@ -1,4 +1,4 @@
-          
+/*          
   var debug = (function(){
 
     $('<div class="settings"><div class="tab"></div><div class="inner"><ul><li>Messages | </li><li><a data-role="ini" href="#">init-playQueue</a></li></ul></div></div>').appendTo('body');
@@ -44,4 +44,5 @@
       }
 
     });
-  })(); 
+  })();
+  */ 
