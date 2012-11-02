@@ -1,33 +1,21 @@
 
 var socket = (function(){
 
+  var fetch = function(file, e){
+    $.getJSON(file, function(data){
+      channel.publish({
+        event: e,
+        data: data
+      });
+    });
+  }
+
   return {
-    fetch: function(){
-      $.getJSON('data/playQueue.json', function(data){
-        channel.publish({
-          event: 'init-playQueue',
-          data: data
-        });
-      });
-    }, 
     playQueue: function(){
-      $.getJSON('data/playQueue.json', function(data){
-        channel.publish({
-          event: 'init-playQueue',
-          data: data
-        });
-      });
+      fetch('data/playQueue.json', 'init-playQueue');
     },
     track: function(id){
-      $.getJSON('data/track.json', function(data){
-        channel.publish({
-          event: 'init-track',
-          data: data
-        });
-      });
-    },
-    like: function(){
-
+      fetch('data/track.json?id='+id, 'init-track');
     }
   }
 
