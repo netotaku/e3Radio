@@ -1,32 +1,23 @@
 
-var track = function(data){
-  this.id;
-  this.data = data;
+var track = function(){}
+track.prototype.html = function(data){
+  return _.template($('#track-detail').html(), data);
 }
-track.prototype.html = function(view){
-  return _.template($('#track-'+view).html(), this.data);
-}
-track.prototype.draw = function(data, id){
-  this.data = this.byID(data, id);
-  $('#content').empty().html(this.html('detail'));
+track.prototype.draw = function(data){
+  $('#content').empty().html(this.html(data[0]));
   channel.publish({
     event: 'after-draw'
   });
   this.unbind();
 }
-track.prototype.bind = function(id){
+track.prototype.bind = function(){
   channel.subscribe(this, {
-    event: 'after-playQueueUpdate',
+    event: 'init-track',
     cb: function(data){
-      this.draw(data, id);
+      this.draw(data);
     }
   });
 }
 track.prototype.unbind = function(){
   channel.unsubscribe(this);
-}
-track.prototype.byID = function(data, id){
-  for(var i = 0; i < data.length; i++){
-    if(data[i].TrackID == id) return data[i];
-  }
 }

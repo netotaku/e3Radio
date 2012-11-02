@@ -9,8 +9,7 @@ chart.prototype.draw = function(data){
   var i = 1;
 
   $.each(data, function(){
-    var t = new track($.extend(this, { i: i++ }));
-    $ul.append(t.html('list'));
+    $ul.append(_.template($('#track-list').html(), $.extend(this, { i: i++ })));
   });
 
   channel.publish({
@@ -19,7 +18,7 @@ chart.prototype.draw = function(data){
 }
 chart.prototype.bind = function(){
   channel.subscribe(this, {
-    event: 'after-playQueueUpdate',
+    event: 'render-chart',
     cb: function(data){
       this.draw(data);
     }

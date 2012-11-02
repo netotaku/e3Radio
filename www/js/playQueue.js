@@ -30,36 +30,24 @@ playQueue.prototype.pop = function(){
   this.tracks.reverse();  
   this.tracks.pop();
   this.tracks.reverse();
-  this.finished();
+  this.render();
 } 
 playQueue.prototype.ini = function(data){
   this.tracks = data;
-  this.initialised();
-  this.finished();
+  this.render();
 }
 playQueue.prototype.add = function(data){
   var that = this;
   $.each(data, function(){
     that.tracks.splice(1, 0, this);
   });
-  this.finished();
+  this.render();
 }
-playQueue.prototype.finished = function(){
+playQueue.prototype.render = function(){
   var that = this;
   channel.publish({ 
-    event: 'after-playQueueUpdate', 
+    event: 'render-chart', 
     data: that.tracks 
   });
 }
-playQueue.prototype.initialised = function(){
-  channel.publish({ 
-    event: 'playQueue-initialised'
-  });
-}
-playQueue.prototype.fetch = function(cb){
-  if(this.tracks){
-    this.finished();
-  } else {
-    socket.fetch();
-  }
-}
+

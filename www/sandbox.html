@@ -25,8 +25,6 @@
         
         <div id="modal"></div>
 
-        <div id="templates"></div>
-
         <!-- templates -->
 
         <script type="text/html" id="logo">
@@ -173,15 +171,23 @@
           ///////////////////////////
 
           RTR.on('route:track', function(id) {
+            PGE.chrome();
             CHT.unbind();
-            TRK.bind(id);
-            PLQ.fetch();
+            TRK.bind();
+            socket.track(id);
           });
 
           RTR.on('route:defaultRoute', function(actions) {
+            PGE.chrome();
             CHT.bind();
             TRK.unbind();
-            PLQ.fetch();
+
+            if(PLQ.tracks){
+              PLQ.render();
+            } else {
+              socket.playQueue();
+            }
+
           });
           
           Backbone.history.start();           
