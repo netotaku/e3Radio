@@ -1,12 +1,14 @@
-var modal = function(){
+var modal = (function(){
 
-	this.$inst = $('#modal');
+	var $inst = $('#modal');
 
-	channel.subscribe(this, {
-	  event: 'after-draw',
-	  cb: function(){
-	    this.$inst.hide();
-	  }
-	});
+	return {
+		show: function(){
+			$inst.show();
+		},
+		hide: function(){
+			$inst.hide();
+		}
+	}
 
-};
+})();

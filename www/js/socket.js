@@ -2,7 +2,9 @@
 var socket = (function(){
 
   var fetch = function(file, e){
+    modal.show();
     $.getJSON(file, function(data){
+      modal.hide();  
       channel.publish({
         event: e,
         data: data
