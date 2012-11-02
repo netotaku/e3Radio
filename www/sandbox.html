@@ -25,6 +25,8 @@
         
         <div id="modal"></div>
 
+        <div id="templates"></div>
+
         <!-- templates -->
 
         <script type="text/html" id="logo">
@@ -47,41 +49,32 @@
           </div>
         </script>
 
-<!--
-  {
-    "PictureSmall": "http://userserve-ak.last.fm/serve/34s/57090809.png",
-    "PictureMedium": "http://userserve-ak.last.fm/serve/64s/57090809.png",
-    "PictureLarge": "http://userserve-ak.last.fm/serve/126/57090809.png",
-    "PictureExtraLarge": "http://userserve-ak.last.fm/serve/300x300/57090809.png",
-    "DateAdded": "2012-01-12T10:28:27.423",
-    "Likes": 4,
-    "Dislikes": 1,
-    "PlayCount": 3,
-    "LastPlayed": "2012-10-01T10:46:29.39",
-    "RequestDate": null,
-    "RequestUserID": null,
-  
-  },
--->
-
         <script type="text/html" id="track-detail">
             
-          <%
-              
+          <%      
               var perc = 100/(Likes + Dislikes);
               var likesW = perc * Likes;
-              var dislikesW = perc * Dislikes;
-              
+              var dislikesW = perc * Dislikes;  
           %>  
 
           <div class="track-detail">
-            
+
             <div class="row">
               <h3><%= TrackName %></h3>
               <h4><%= Artist %></h4>
             </div>
+            
+            <div class="col">
+              <img class="cover" src="<%= PictureExtraLarge ? PictureExtraLarge : '' %>" />
+              <div class="externals">  
+                <p><a href="<%= SpotifyUri %>">Play in Spotify</a></p>
+                <p><a href="<%= LastFmLink %>">View on last.fm</a></p>
+                <p>Last played <%= LastPlayed %></p>
+              </div>
+            </div>
 
             <div class="col">
+              
               <h5>Summary</h5>
 
               <table>
@@ -102,14 +95,6 @@
                   <td><%= PlayCount %></td>
                 </tr>                
               </table>
-              <div class="externals">  
-                <p><a href="<%= SpotifyUri %>">Play in Spotify</a></p>
-                <p><a href="<%= LastFmLink %>">View on last.fm</a></p>
-                <p>Last played <%= LastPlayed %></p>
-              </div>
-            </div>
-
-            <div class="col">
               <h5>Activity</h5>
               <ul>
                 <% $.each(TrackLikes, function(){ %>
@@ -117,6 +102,7 @@
                 <% }); %>
                 <li><span class="date">Requested by <em>Someone</em> on <%= DateAdded %></li>
               </ul>
+
             </div>
 
           </div>          
@@ -160,272 +146,15 @@
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.js"></script>
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js"></script>
         <script type="text/javascript" src="js/debug.js"></script>
+        <script type="text/javascript" src="js/channel.js"></script>
+        <script type="text/javascript" src="js/socket.js"></script>
+        <script type="text/javascript" src="js/modal.js"></script>
+        <script type="text/javascript" src="js/playQueue.js"></script>
+        <script type="text/javascript" src="js/page.js"></script>
+        <script type="text/javascript" src="js/track.js"></script>
+        <script type="text/javascript" src="js/chart.js"></script>
+        <script type="text/javascript" src="js/window.js"></script>
         <script type="text/javascript">
-
-          var channel = (function(){
-
-            var stack = [];
-
-            return {
-              publish: function(e){
-                $.each(stack, function(){
-                  if(this.event.search(e.event) > -1){
-                    this.cb.call(this.inst, e.data);
-                  }
-                })
-              },
-              subscribe: function(i, data){
-                stack.push(_.extend({
-                  inst: i
-                }, data));
-              },
-              unsubscribe: function(obj, event){
-                var i = 0;
-                for(o in stack){
-                  if(stack[o].inst == obj){
-                    stack.splice(i, 1);
-                  }
-                  i++;
-                }
-              } 
-            }
-
-          })();
-
-          /////////////////////////////////
-
-          var socket = (function(){
-
-            return {
-              fetch: function(){
-                $.getJSON('data/playQueue.json', function(data){
-                  channel.publish({
-                    event: 'init-playQueue',
-                    data: data
-                  });
-                });
-              }
-            }
-
-          })();
-
-          /////////////////////////////////
-
-          var playQueue = function(){
-
-            this.tracks;
-            var that = this;
-
-            channel.subscribe(this, {
-              event: 'init-playQueue',
-              cb: function(data){
-                this.ini(data);
-              }
-            });
-
-            channel.subscribe(this, {
-              event: 'add-request',
-              cb: function(data){
-                this.add(data);
-              }
-            });
-
-            channel.subscribe(this, {
-              event: 'move-playhead',
-              cb: function(){
-                this.pop();
-              }
-            });
-
-          }
-          playQueue.prototype.pop = function(){
-            this.tracks.reverse();  
-            this.tracks.pop();
-            this.tracks.reverse();
-            this.finished();
-          } 
-          playQueue.prototype.ini = function(data){
-            this.tracks = data;
-            this.initialised();
-            this.finished();
-          }
-          playQueue.prototype.add = function(data){
-            var that = this;
-            $.each(data, function(){
-              that.tracks.splice(1, 0, this);
-            });
-            this.finished();
-          }
-          playQueue.prototype.finished = function(){
-            var that = this;
-            channel.publish({ 
-              event: 'after-playQueueUpdate', 
-              data: that.tracks 
-            });
-          }
-          playQueue.prototype.initialised = function(){
-            channel.publish({ 
-              event: 'playQueue-initialised'
-            });
-          }
-          playQueue.prototype.fetch = function(cb){
-            if(this.tracks){
-              this.finished();
-            } else {
-              socket.fetch();
-            }
-          }
-          
-          //////////////////////////////////////////////////////////
-
-          var modal = function(){
-
-            this.$inst = $('#modal');
-
-            channel.subscribe(this, {
-              event: 'after-draw',
-              cb: function(){
-                this.$inst.hide();
-              }
-            });
-
-          };
-
-          //////////////////////////////////////////////////////////
-
-          var page = function(){
-            $('h1').live('click', function(){
-              Backbone.history.navigate('', true); 
-            });
-            channel.subscribe(this, {
-              event: 'playQueue-initialised',
-              cb: function(){
-                this.chrome();
-              }
-            })
-          }
-          page.prototype.chrome = function(){
-            var t = this;
-            var logo = { logo: t.t('logo') };
-            $('#e3r').empty().html(t.t('page', $.extend({}, {
-              header: t.t('header', logo),
-              footer: t.t('footer')
-            })));
-            channel.publish({
-              event: 'after-chrome'
-            })
-          }
-          page.prototype.t = function(id, data){
-            return _.template($('#'+id).html(), data || {});
-          }
-
-          //////////////////////////////////////////////////////////
-
-          var superTrack = function(){
-
-          }
-
-          var track = function(data){
-            this.id;
-            this.data = data;
-          }
-          track.prototype.html = function(view){
-            return _.template($('#track-'+view).html(), this.data);
-          }
-          track.prototype.draw = function(data, id){
-            this.data = this.byID(data, id);
-            $('#content').empty().html(this.html('detail'));
-            channel.publish({
-              event: 'after-draw'
-            });
-            this.unbind();
-          }
-          track.prototype.bind = function(id){
-            channel.subscribe(this, {
-              event: 'after-playQueueUpdate',
-              cb: function(data){
-                this.draw(data, id);
-              }
-            });
-          }
-          track.prototype.unbind = function(){
-            channel.unsubscribe(this);
-          }
-          track.prototype.byID = function(data, id){
-            for(var i = 0; i < data.length; i++){
-              if(data[i].TrackID == id) return data[i];
-            }
-          }
-
-          //////////////////////////////////////////////////////////
-
-          var chart = function(){
-            $('#tracks li').live('click', function(){
-              Backbone.history.navigate('track/' + $(this).data('track-id'), true); 
-            });
-          }
-          chart.prototype.draw = function(data){
-            var $ul = $($('#chart').html()).appendTo($('#content').empty());
-            var i = 1;
-
-            $.each(data, function(){
-              var t = new track($.extend(this, { i: i++ }));
-              $ul.append(t.html('list'));
-            });
-
-            channel.publish({
-              event: 'after-draw'
-            })
-          }
-          chart.prototype.bind = function(){
-            channel.subscribe(this, {
-              event: 'after-playQueueUpdate',
-              cb: function(data){
-                this.draw(data);
-              }
-            });
-          }
-          chart.prototype.unbind = function(){
-            channel.unsubscribe(this);
-          }
-
-          //////////////////////////////////////////////////////////
-
-          channel.subscribe(this, {
-            event: 'after-chrome',
-            cb: function(){
-
-             $('[placeholder]').each(function(){
-               var $ths = $(this),
-                    scrpt = $ths.attr('placeholder') + '        ',
-                    chr, str, reset = function() {
-                      str = ' > ';
-                      chr = 0;
-                    },
-                    set = function() {
-                      if (scrpt[chr]) {
-                        str += scrpt[chr++];
-                      } else {
-                        reset();
-                      }
-                      $ths.attr('placeholder', str);
-                    },
-                    tck = function() {
-                      setTimeout(function() {
-                        set();
-                        tck();
-                      }, 200);
-                    };
-
-                reset();
-                set();
-                tck();
-  
-              });
-            }
-          }); 
-
-          ///////////////////////////
 
           var router = Backbone.Router.extend({
             routes: {

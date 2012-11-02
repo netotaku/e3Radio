@@ -267,6 +267,10 @@ footer{
 	border-bottom: dotted #ccc 1px;
 }
 
+img.cover{
+	width: 100%;
+}
+
 /****** settings **********/
 
 
