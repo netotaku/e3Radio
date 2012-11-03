@@ -5,9 +5,12 @@
         <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.7.2/build/cssreset/cssreset-min.css" />
         <link rel="stylesheet" type="text/css" href="css/e3Radio.css" />
         <title>e3Radio</title>
+        <!--[if IE 9]><link rel="stylesheet" type="text/css" href="css/ltie9.css" /><![endif]-->
     </head>
     <body>
         
+      <div id="app">      
+
         <div class="wrapper">
           <div id="e3r"></div>
         </div> 
@@ -27,139 +30,143 @@
           <div class="spinner"></div>
         </div>
 
-        <!-- templates -->
+      </div>
 
-        <script type="text/html" id="login">
-          <div class="login">
-            <a href="#">Login with Facebook</a>
+      <div id="browser-warning">Upgrade your browser <a href="https://www.google.com/intl/en/chrome/browser/">here</a></div>
+
+      <!-- templates -->
+
+      <script type="text/html" id="login">
+        <div class="login">
+          <a href="#">Login with Facebook</a>
+        </div>
+      </script>
+
+      <script type="text/html" id="logo">
+        <h1>e3Radio.</h1>
+      </script>
+
+      <script type="text/html" id="header">
+        <header>
+          <menu>
+            <ul>
+              <li><a href="#">Logout</a></li>
+            </ul>
+          </menu> 
+          <%= logo %>
+        </header>
+        <div id="request">
+          <form>
+            <input type="text" name="request" placeholder="Democratically building the ultimate e3 playlist...">
+          </form>
+        </div>
+      </script>
+
+      <script type="text/html" id="track-detail">
+          
+        <%      
+            var perc = 100/(Likes + Dislikes);
+            var likesW = perc * Likes;
+            var dislikesW = perc * Dislikes;  
+        %>  
+
+        <div class="track-detail">
+
+          <div class="row">
+            <h3><%= TrackName %></h3>
+            <h4><%= Artist %></h4>
           </div>
-        </script>
-
-        <script type="text/html" id="logo">
-          <h1>e3Radio.</h1>
-        </script>
-
-        <script type="text/html" id="header">
-          <header>
-            <menu>
-             <!-- <ul>
-                <li><a href="#">Login</a></li>
-              </ul> -->
-            </menu> 
-            <%= logo %>
-          </header>
-          <div id="request">
-            <form>
-              <input type="text" name="request" placeholder="Democratically building the ultimate e3 playlist...">
-            </form>
+          
+          <div class="col">
+            <img class="cover" src="<%= PictureExtraLarge ? PictureExtraLarge : '' %>" />
+            <div class="externals">  
+              <p><a href="<%= SpotifyUri %>">Play in Spotify</a></p>
+              <p><a href="<%= LastFmLink %>">View on last.fm</a></p>
+              <p>Last played <%= LastPlayed %></p>
+            </div>
           </div>
-        </script>
 
-        <script type="text/html" id="track-detail">
+          <div class="col">
             
-          <%      
-              var perc = 100/(Likes + Dislikes);
-              var likesW = perc * Likes;
-              var dislikesW = perc * Dislikes;  
-          %>  
+            <h5>Summary</h5>
 
-          <div class="track-detail">
+            <table>
+              <tr>
+                <th>Likes</th>
+                <td><div class="bar likes" style="width: <%= likesW %>%"></div></td>
+              </tr>
+              <tr>
+                <th>Dislikes</th>
+                <td><div class="bar dislikes" style="width: <%= dislikesW %>%"></div></td>
+              </tr>
+              <tr>
+                <th>Karma</th>
+                <td><%= Likes - Dislikes %></td>
+              </tr>                
+              <tr>
+                <th>Plays</th>
+                <td><%= PlayCount %></td>
+              </tr>                
+            </table>
+            <h5>Activity</h5>
+            <ul>
+              <% $.each(TrackLikes, function(){ %>
+                <li><%= this.IsLike ? 'Liked' : 'Disliked' %> by <em><%= this.Name %></em></li>
+              <% }); %>
+              <li><span class="date">Requested by <em>Someone</em> on <%= DateAdded %></li>
+            </ul>
 
-            <div class="row">
-              <h3><%= TrackName %></h3>
-              <h4><%= Artist %></h4>
-            </div>
-            
-            <div class="col">
-              <img class="cover" src="<%= PictureExtraLarge ? PictureExtraLarge : '' %>" />
-              <div class="externals">  
-                <p><a href="<%= SpotifyUri %>">Play in Spotify</a></p>
-                <p><a href="<%= LastFmLink %>">View on last.fm</a></p>
-                <p>Last played <%= LastPlayed %></p>
-              </div>
-            </div>
-
-            <div class="col">
-              
-              <h5>Summary</h5>
-
-              <table>
-                <tr>
-                  <th>Likes</th>
-                  <td><div class="bar likes" style="width: <%= likesW %>%"></div></td>
-                </tr>
-                <tr>
-                  <th>Dislikes</th>
-                  <td><div class="bar dislikes" style="width: <%= dislikesW %>%"></div></td>
-                </tr>
-                <tr>
-                  <th>Karma</th>
-                  <td><%= Likes - Dislikes %></td>
-                </tr>                
-                <tr>
-                  <th>Plays</th>
-                  <td><%= PlayCount %></td>
-                </tr>                
-              </table>
-              <h5>Activity</h5>
-              <ul>
-                <% $.each(TrackLikes, function(){ %>
-                  <li><%= this.IsLike ? 'Liked' : 'Disliked' %> by <em><%= this.Name %></em></li>
-                <% }); %>
-                <li><span class="date">Requested by <em>Someone</em> on <%= DateAdded %></li>
-              </ul>
-
-            </div>
-
-          </div>          
-        </script>
-
-        <script type="text/html" id="track-list">
-            <li data-track-id="<%= TrackID %>">
-              <p style=" <%= PictureExtraLarge ? 'background-image: url(' + PictureExtraLarge +')' : '' %>" data-id="">
-                <span class="number"><%= i %></span>
-                <span class="info">
-                  <span class="artist"><em><%= Artist %></em></span>
-                  <span class="title"><em><%= TrackName %></em></span>
-                </span>
-              </p>
-            </li>
-        </script>
-
-        <script type="text/html" id="chart">
-          <ul id="tracks"></ul>
-        </script>
-
-        <script type="text/html" id="page">
-          <%= header %>
-          <div class="content">
-            <article>
-              <div id="content"></div>
-              <div class="clear"></div>
-            </article>
           </div>
-          <%= footer %>
-        </script>
 
-        <script type="text/html" id="footer">
-          <footer>
-            <p><a href="http://e3.co.uk">http://e3.co.uk</a></p>
-          </footer> 
-        </script>        
+        </div>          
+      </script>
 
-        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.3/underscore-min.js"></script>
-        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.js"></script>
-        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js"></script>
-        <script type="text/javascript" src="js/debug.js"></script>
-        <script type="text/javascript" src="js/channel.js"></script>
-        <script type="text/javascript" src="js/socket.js"></script>
-        <script type="text/javascript" src="js/modal.js"></script>
-        <script type="text/javascript" src="js/playQueue.js"></script>
-        <script type="text/javascript" src="js/page.js"></script>
-        <script type="text/javascript" src="js/track.js"></script>
-        <script type="text/javascript" src="js/chart.js"></script>
-        <script type="text/javascript" src="js/login.js"></script>
-        <script type="text/javascript" src="js/ready.js"></script>
+      <script type="text/html" id="track-list">
+          <li data-track-id="<%= TrackID %>">
+            <p style=" <%= PictureExtraLarge ? 'background-image: url(' + PictureExtraLarge +')' : '' %>" data-id="">
+              <span class="number"><%= i %></span>
+              <span class="info">
+                <span class="artist"><em><%= Artist %></em></span>
+                <span class="title"><em><%= TrackName %></em></span>
+              </span>
+            </p>
+          </li>
+      </script>
+
+      <script type="text/html" id="chart">
+        <ul id="tracks"></ul>
+      </script>
+
+      <script type="text/html" id="page">
+        <%= header %>
+        <div class="content">
+          <article>
+            <div id="content"></div>
+            <div class="clear"></div>
+          </article>
+        </div>
+        <%= footer %>
+      </script>
+
+      <script type="text/html" id="footer">
+        <footer>
+          <p><a href="http://e3.co.uk">http://e3.co.uk</a></p>
+        </footer> 
+      </script>        
+
+      <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+      <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.3/underscore-min.js"></script>
+      <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.js"></script>
+      <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js"></script>
+      <script type="text/javascript" src="js/debug.js"></script>
+      <script type="text/javascript" src="js/channel.js"></script>
+      <script type="text/javascript" src="js/socket.js"></script>
+      <script type="text/javascript" src="js/modal.js"></script>
+      <script type="text/javascript" src="js/playQueue.js"></script>
+      <script type="text/javascript" src="js/page.js"></script>
+      <script type="text/javascript" src="js/track.js"></script>
+      <script type="text/javascript" src="js/chart.js"></script>
+      <script type="text/javascript" src="js/login.js"></script>
+      <script type="text/javascript" src="js/ready.js"></script>
     </body>
 </html>

@@ -348,8 +348,16 @@ img.cover{
 
 .login{
 	text-align: center;
-	padding-top: 50px;
+	padding-top: 100px;
 	font-size: 20px;
+}
+
+#app{
+	display: none;
+}
+#browser-warning{
+	display: block;
+	padding: 50px;
 }
 
 /* #Media Queries
