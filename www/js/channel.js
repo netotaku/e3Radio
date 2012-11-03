@@ -6,6 +6,7 @@ var channel = (function(){
   return {
     publish: function(e){
       $.each(stack, function(){
+        // console.log(this);
         if(this.event.search(e.event) > -1){
           this.cb.call(this.inst, e.data);
         }

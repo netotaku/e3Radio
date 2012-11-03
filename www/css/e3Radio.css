@@ -58,15 +58,15 @@ h2{
 }
 
 header menu > ul{
-	position: absolute;
-	right: 0px;
-	z-index: 1;
+	float: right;
+	padding-right: 10px;
+	padding-top: 8px;
 }
 
 header menu ul > li{
 	float: left;
 }
-
+/*
 header menu ul li ul{
 	display: none;
 }
@@ -95,7 +95,7 @@ header menu ul li li a{
 header menu ul ul{
 	position: absolute;
 }
-
+*/
 
 article{
 	min-height: 350px;
@@ -353,10 +353,10 @@ img.cover{
 }
 
 #app{
-	display: none;
+	height: 100%;
 }
 #browser-warning{
-	display: block;
+	display: none;
 	padding: 50px;
 }
 
