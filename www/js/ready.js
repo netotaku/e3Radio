@@ -34,4 +34,8 @@ RTR.on('route:defaultRoute', function(actions) {
 
 });
 
-Backbone.history.start();        
+//////////////////////
+
+login.show(function(){
+  Backbone.history.start();
+})
