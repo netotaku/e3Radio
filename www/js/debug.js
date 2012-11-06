@@ -28,7 +28,6 @@
               event: 'init-playQueue',
               data: data
             });
-            $this.parent().remove();
           });
         break;
         case 'add':
