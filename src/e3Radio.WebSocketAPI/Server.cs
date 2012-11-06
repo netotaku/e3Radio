@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Fleck;
+using System.Xml.Linq;
 
 namespace e3Radio.WebSocketAPI
 {
@@ -35,7 +36,7 @@ namespace e3Radio.WebSocketAPI
                 {
                     // when a client sends us a message, forward it to other clients
                     Console.WriteLine(message);
-                    HandleIncomingMessage(message);
+                    HandleIncomingMessage(socket, message);
                 };
             });
 
@@ -44,59 +45,92 @@ namespace e3Radio.WebSocketAPI
             var input = Console.ReadLine();
             while (input != "exit")
             {
-                BroadcastChatMessage(input);
+                BroadcastEvent("chat-message", input);
                 input = Console.ReadLine();
             }
         }
 
-        private static void BroadcastChatMessage(string input)
-        {
-            // Broadcast message to users in JSON format
-            var msg = new
-                {
-                    type = "chat",
-                    message = input
-                };
-            var json = Newtonsoft.Json.JsonConvert.SerializeObject(msg);
-            allSockets.ToList().ForEach(s => s.Send(json));
-        }
-
-        private static void HandleIncomingMessage(string message)
+        /// <summary>
+        /// Handle incoming messages based on spec in readme.md
+        /// </summary>
+        /// <param name="message">Incoming json string</param>
+        private static void HandleIncomingMessage(IWebSocketConnection socket, string message)
         {
             // Convert incoming json into a readable format
             var json = Newtonsoft.Json.JsonConvert.DeserializeXNode("{root:" + message + "}").Element("root");
 
             // Get common params
-            string type = (string)json.Element("type");
-            long? userId = (long?)json.Element("userId");
-            int? trackId = (int?)json.Element("trackId");
+            string eventName = (string)json.Element("event");
+            long? userId = 1;// (long?)json.Element("userId");
 
-            // Update DB if necessary depending on the type
-            switch (type)
+            // Handle the event
+            switch (eventName)
             {
-                case "chat":
-                    //todo: log chat messages?
+                case "request-tracks":
+                    SendTrackListing(socket, json);
                     break;
-                case "love":
-                case "hate":
-                case "unvote":
-                    var tp = (e3Radio.Data.TrackManager.TrackVoteType)Enum.Parse(typeof(e3Radio.Data.TrackManager.TrackVoteType), type);
-                    e3Radio.Data.TrackManager.SaveTrackVote(userId.Value, trackId.Value, tp);
+                //case "love":
+                //case "hate":
+                //case "unvote":
+                //    int? trackId = (int?)json.Element("trackId");
+                //    var tp = (e3Radio.Data.TrackManager.TrackVoteType)Enum.Parse(typeof(e3Radio.Data.TrackManager.TrackVoteType), eventName);
+                //    e3Radio.Data.TrackManager.SaveTrackVote(userId.Value, trackId.Value, tp);
+                //    break;
+                case "add-request":
+                    string spotifyUri = (string)json.Element("data");
+                    var track = e3Radio.Data.TrackManager.RequestTrack(spotifyUri, userId.Value);
+                    BroadcastEvent("add-request", track);
                     break;
-                case "addtoqueue":
-                    string spotifyUri = (string)json.Element("SpotifyUri");
-                    e3Radio.Data.TrackManager.RequestTrack(spotifyUri, userId.Value);
+                case "move-playhead":
+                    string spotifyUri2 = (string)json.Element("data");
+                    var track2 = e3Radio.Data.TrackManager.UpdateNowPlayingTrack(spotifyUri2);
+                    BroadcastEvent("move-playhead", track2);
                     break;
-                case "nowplaying":
-                    string spotifyUri2 = (string)json.Element("SpotifyUri");
-                    e3Radio.Data.TrackManager.UpdateNowPlayingTrack(spotifyUri2);
+                case "chat-message":
+                    allSockets.ToList().ForEach(s => s.Send(message));
                     break;
             }
-
-            // broadcast this message to all clients so they can show notification
-            allSockets.ToList().ForEach(s => s.Send(message));
         }
 
+        /// <summary>
+        /// Send message to all sockets to advance the playhead to this track.
+        /// </summary>
+        /// <param name="track"></param>
+        private static void BroadcastEvent(string @event, object data)
+        {
+            // Broadcast message to users in JSON format
+            var msg = new
+            {
+                @event = @event,
+                data = data
+            };
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(msg);
+            allSockets.ToList().ForEach(s => s.Send(json));
+        }
 
+        /// <summary>
+        /// Sends the requested track listing to the socket.
+        /// </summary>
+        /// <param name="socket"></param>
+        /// <param name="type"></param>
+        /// <param name="page"></param>
+        /// <param name="perPage"></param>
+        private static void SendTrackListing(IWebSocketConnection socket, XElement json)
+        {
+            // get params
+            string chart = (string)json.Element("chart");
+            int page = (int)json.Element("page");
+            int pageSize = (int)json.Element("pageSize");
+            long? userId = (long?)json.Element("userId");
+
+            // prepare response
+            var msg = new
+            {
+                @event = "track-listing",
+                data = e3Radio.Data.TrackManager.GetTrackListing(chart, userId.GetValueOrDefault(), page, pageSize)
+            };
+            socket.Send(Newtonsoft.Json.JsonConvert.SerializeObject(msg));
+        }
+        
     }
 }

@@ -6,8 +6,6 @@
         var start = function () {
             var inc = document.getElementById('incomming');
             var wsImpl = window.WebSocket || window.MozWebSocket;
-            var form = document.getElementById('sendForm');
-            var input = document.getElementById('sendText');
 
             inc.innerHTML += "connecting to server ..<br/>";
 
@@ -16,30 +14,11 @@
 
             // when data is comming from the server, this metod is called
             ws.onmessage = function (evt) {
+                inc.innerHTML += evt.data + '<br/>';
                 // messages are sent in json - parse and handle this one
                 var json = JSON.parse(evt.data);
                 console.log(json);
-                if (json.type == "chat") {
-                    inc.innerHTML += "Chat message: " + json.message + '<br/>';
-                }
-                else if (json.type == "nowplaying") {
-                    inc.innerHTML += "Track changed to: " + json.TrackName + ' by ' + json.Artist + '<br/>';
-                }
-                else if (json.type == "love") {
-                    inc.innerHTML += json.Name + ' loves ' + json.TrackName + ' by ' + json.Artist + '<br/>';
-                }
-                else if (json.type == "hate") {
-                    inc.innerHTML += json.Name + ' hates ' + json.TrackName + ' by ' + json.Artist + '<br/>';
-                }
-                else if (json.type == "voteup") {
-                    inc.innerHTML += json.Name + ' voted to hear ' + json.TrackName + ' by ' + json.Artist + '<br/>';
-                }
-                else if (json.type == "votedown") {
-                    inc.innerHTML += json.Name + ' voted against ' + json.TrackName + ' by ' + json.Artist + '<br/>';
-                }
-                else if (json.type == "addtoqueue") {
-                    inc.innerHTML += json.Name + ' added to the queue ' + json.TrackName + ' by ' + json.Artist + '<br/>';
-                }
+                document.getElementById('txtPlayhead').value = json.data[0].SpotifyUri;
             };
 
             // when the connection is established, this method is called
@@ -52,21 +31,91 @@
                 inc.innerHTML += '.. connection closed<br/>';
             }
 
+            // Handle chat form
+            var form = document.getElementById('sendForm');
+            var input = document.getElementById('sendText');
             form.addEventListener('submit', function (e) {
                 e.preventDefault();
-                var val = { type: 'chat', message: input.value };
+                var val = { event: 'chat-message', data: input.value };
                 ws.send(JSON.stringify(val));
                 input.value = "";
             });
 
+
         }
         window.onload = start;
+
+        function sendTrackRequest() {
+            var val = {
+                event: 'request-tracks',
+                chart: document.getElementById('ddlChart').value,
+                page: document.getElementById('txtPage').value,
+                pageSize: document.getElementById('txtPageSize').value,
+            };
+            ws.send(JSON.stringify(val));
+        }
+
+        function sendMakeRequest() {
+            var val = {
+                event: 'add-request',
+                data: document.getElementById('txtSpotify').value,
+            };
+            ws.send(JSON.stringify(val));
+        }
+        function sendMovePlayhead() {
+            var val = {
+                event: 'move-playhead',
+                data: document.getElementById('txtPlayhead').value,
+            };
+            ws.send(JSON.stringify(val));
+        }
     </script>
 </head>
 <body>
+    <h1>e3Radio socket test</h1>
+    
+    <h2>request track listing</h2>
+    <p>
+        {
+            event: 'request-tracks', 
+            chart: '<select id="ddlChart">
+                        <option>playQueue</option>
+                        <option>worst</option>
+                        <option>mostPlayed</option>
+                        <option>marmite</option>
+                        <option>myLikes</option>
+                        <option>myDislikes</option>
+                        <option>ultimate</option>
+                        <option>recent</option>
+                    </select>',
+            page: <input type="text" id="txtPage" value="1" size="1" />, 
+            pageSize: <input type="text" id="txtPageSize" value="10" size="1" /> 
+        }
+        <input type="submit" id="btnRequestChart" onclick="sendTrackRequest()" />
+    </p>
+
+    <h2>make a request</h2>
+    <p>
+        { event: 'add-request', data: '<input type="text" id="txtSpotify" value="spotify:track:1u1Ps262k227FPAm5BVUjd" />' }
+        <input type="submit" onclick="sendMakeRequest()" />
+    </p>
+
+    <h2>move the playhead (debug use only)</h2>
+    <p>
+        { event: 'move-playhead', data: '<input type="text" id="txtPlayhead" value="" />' }
+        <input type="submit" onclick="sendMovePlayhead()" />
+    </p>
+
+    <h2>chat</h2>
 	<form id="sendForm">
-		<input id="sendText" placeholder="Text to send" />
+        {
+            event: 'chat-message',
+            data: '<input id="sendText" placeholder="Text to send" />'
+        }		
 	</form>
+    
+    <h2>socket responses</h2>
     <pre id="incomming"></pre>
+
 </body>
 </html>

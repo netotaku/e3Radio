@@ -1,6 +1,9 @@
 var env = (function(){
 	
-	var config = {
+    var config = {
+        'localhost': {
+            fbid: '147350892005614'
+        },
 		'e3radio.local': {
 			fbid: '437450372968927'
 		},
