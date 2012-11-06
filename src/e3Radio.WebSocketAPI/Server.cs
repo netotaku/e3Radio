@@ -57,14 +57,22 @@ namespace e3Radio.WebSocketAPI
         /// <returns></returns>
         private static long GetUserID(IWebSocketConnection socket)
         {
-            // cookie key includes app id
-            var fbCookieValue = socket.ConnectionInfo.Cookies["fbsr_" + System.Configuration.ConfigurationManager.AppSettings["fbAppId"]];
-            Facebook.FacebookClient x = new Facebook.FacebookClient();
+            try
+            {
+                // cookie key includes app id
+                var fbCookieValue = socket.ConnectionInfo.Cookies["fbsr_" + System.Configuration.ConfigurationManager.AppSettings["fbAppId"]];
+                Facebook.FacebookClient x = new Facebook.FacebookClient();
 
-            // parse the cookie using the app secret
-            dynamic y = x.ParseSignedRequest(System.Configuration.ConfigurationManager.AppSettings["fbAppSecret"], fbCookieValue);
+                // parse the cookie using the app secret
+                dynamic y = x.ParseSignedRequest(System.Configuration.ConfigurationManager.AppSettings["fbAppSecret"], fbCookieValue);
 
-            return long.Parse(y.user_id);
+                return long.Parse(y.user_id);
+            }
+            catch
+            {
+                // user id 1 = autoplay. this is temporary...
+                return 1;
+            }
         }
 
         /// <summary>
