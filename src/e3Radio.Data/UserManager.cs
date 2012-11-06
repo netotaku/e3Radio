@@ -15,13 +15,13 @@ namespace e3Radio.Data
                 u = new e3Radio.Data.User();
 
                 // get the dude's info from book of face
-                //var fb = new Facebook.Web.FacebookWebClient();
-                //dynamic me = fb.Get("/me");
-                //u.UserID = userId;
-                //u.Username = me.username ?? me.name;
-                //u.Name = me.name;
-                //u.FacebookLink = me.link;
-                //u.DateCreated = DateTime.Now;
+                var fb = new Facebook.FacebookClient();
+                dynamic me = fb.Get("/" + userId);
+                u.UserID = userId;
+                u.Username = me.username ?? me.name;
+                u.Name = me.name;
+                u.FacebookLink = me.link;
+                u.DateCreated = DateTime.Now;
 
                 db.Users.Add(u);
                 db.SaveChanges();

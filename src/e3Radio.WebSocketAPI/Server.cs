@@ -51,6 +51,23 @@ namespace e3Radio.WebSocketAPI
         }
 
         /// <summary>
+        /// Gets the user's Facebook ID from their fb cookie.
+        /// </summary>
+        /// <param name="socket"></param>
+        /// <returns></returns>
+        private static long GetUserID(IWebSocketConnection socket)
+        {
+            // cookie key includes app id
+            var fbCookieValue = socket.ConnectionInfo.Cookies["fbsr_" + System.Configuration.ConfigurationManager.AppSettings["fbAppId"]];
+            Facebook.FacebookClient x = new Facebook.FacebookClient();
+
+            // parse the cookie using the app secret
+            dynamic y = x.ParseSignedRequest(System.Configuration.ConfigurationManager.AppSettings["fbAppSecret"], fbCookieValue);
+
+            return long.Parse(y.user_id);
+        }
+
+        /// <summary>
         /// Handle incoming messages based on spec in readme.md
         /// </summary>
         /// <param name="message">Incoming json string</param>
@@ -61,7 +78,7 @@ namespace e3Radio.WebSocketAPI
 
             // Get common params
             string eventName = (string)json.Element("event");
-            long? userId = 1;// (long?)json.Element("userId");
+            long userId = GetUserID(socket);
 
             // Handle the event
             switch (eventName)
@@ -78,7 +95,7 @@ namespace e3Radio.WebSocketAPI
                 //    break;
                 case "add-request":
                     string spotifyUri = (string)json.Element("data");
-                    var track = e3Radio.Data.TrackManager.RequestTrack(spotifyUri, userId.Value);
+                    var track = e3Radio.Data.TrackManager.RequestTrack(spotifyUri, userId);
                     BroadcastEvent("add-request", track);
                     break;
                 case "move-playhead":
