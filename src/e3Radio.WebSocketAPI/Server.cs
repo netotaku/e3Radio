@@ -17,7 +17,7 @@ namespace e3Radio.WebSocketAPI
         static void Main()
         {
             FleckLog.Level = LogLevel.Debug;
-            var server = new WebSocketServer("ws://localhost:8181");
+            var server = new WebSocketServer(System.Configuration.ConfigurationManager.AppSettings["listenOn"]);
             server.Start(socket =>
             {
                 socket.OnOpen = () =>
