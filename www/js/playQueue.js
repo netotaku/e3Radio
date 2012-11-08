@@ -5,7 +5,7 @@ var playQueue = function(){
   var that = this;
 
   channel.subscribe(this, {
-    event: 'init-playQueue',
+    event: 'RX-playQueue',
     cb: function(data){
       this.ini(data);
     }

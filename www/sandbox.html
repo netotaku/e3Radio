@@ -13,21 +13,19 @@
         <div class="wrapper">
           <div id="e3r"></div>
         </div>
+        <div id="modal">
+          <div class="spinner"></div>
+        </div>
         <!-- s:debug --> 
         <div class="settings">
           <div class="tab"></div>
           <div class="inner">
-            <ul>
-              <li>Messages | </li>
-              <li><a data-role="add" href="#">add-request</a> | </li>
-              <li><a data-role="pop" href="#">move-playhead</a></li>
-            </ul>
+            <div id="connection-indicator">
+              Status | <span>connected</span>
+            </div>
           </div>
         </div>
         <!-- e:debug -->
-        <div id="modal">
-          <div class="spinner"></div>
-        </div>
       </div>
       <div id="browser-warning">Upgrade your browser <a href="https://www.google.com/intl/en/chrome/browser/">here</a></div>
 
@@ -148,6 +146,7 @@
       <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.js"></script>
       <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js"></script>
       <script type="text/javascript" src="js/env.js"></script>
+      <script type="text/javascript" src="js/messages.js"></script>
       <script type="text/javascript" src="js/debug.js"></script>
       <script type="text/javascript" src="js/modal.js"></script>
       <script type="text/javascript" src="js/channel.js"></script>

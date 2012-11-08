@@ -1,4 +1,12 @@
 
+#connection-indicator{
+
+}
+
+#connection-indicator.connected span{
+	color: magenta;
+}
+
 body, html{
 	height: 100%;
 }

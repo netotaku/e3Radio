@@ -4,15 +4,14 @@ track.prototype.html = function(data){
   return _.template($('#track-detail').html(), data);
 }
 track.prototype.draw = function(data){
+  PGE.chrome();
   $('#content').empty().html(this.html(data[0]));
-  channel.publish({
-    event: 'after-draw'
-  });
+  modal.hide();
   this.unbind();
 }
 track.prototype.bind = function(){
   channel.subscribe(this, {
-    event: 'init-track',
+    event: 'RX-track',
     cb: function(data){
       this.draw(data);
     }

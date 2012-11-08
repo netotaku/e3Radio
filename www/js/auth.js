@@ -12,7 +12,7 @@ var auth = (function(){
 	  if(r.status == 'connected'){
 	    FB.api('/me', function(r) {
 	      user = r;
-	      Backbone.history.start();
+	      e3R.begin();
 	    });  
 	  } else {
 	    show();  
@@ -28,7 +28,7 @@ var auth = (function(){
 	  e.preventDefault();
 	  FB.logout();
 	  show();
-	  Backbone.history.stop();
+	  e3R.end();
 	})
 
 	FB.init({

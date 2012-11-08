@@ -5,6 +5,7 @@ var chart = function(){
   });
 }
 chart.prototype.draw = function(data){
+  PGE.chrome();
   var $ul = $($('#chart').html()).appendTo($('#content').empty());
   var i = 1;
 
@@ -12,9 +13,11 @@ chart.prototype.draw = function(data){
     $ul.append(_.template($('#track-list').html(), $.extend(this, { i: i++ })));
   });
 
-  channel.publish({
-    event: 'after-draw'
-  })
+  modal.hide();
+
+  // channel.publish({
+  //   event: 'after-draw'
+  // });
 }
 chart.prototype.bind = function(){
   channel.subscribe(this, {

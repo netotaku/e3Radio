@@ -12,22 +12,44 @@ var PLQ = new playQueue;
 var CHT = new chart;
 var TRK = new track;
 
+var e3R = (function(){
+
+  return {
+    begin: function(){
+      Backbone.history.start();
+    },
+    end: function(){
+      socket.disconnect();
+      Backbone.history.stop();
+    }
+  }
+
+})();
+
 ///////////////////////////
 
 RTR.on('route:track', function(id) {
-  PGE.chrome();
+  modal.show();
+  // PGE.chrome();
   CHT.unbind();
   TRK.bind();
-  socket.track(id);
+  socket.connect(function(){
+    socket.send('TX-track');  
+  });
 });
 
 RTR.on('route:defaultRoute', function(actions) {
-  PGE.chrome();
+  modal.show();
+  // PGE.chrome();
   CHT.bind();
   TRK.unbind();
   if(PLQ.tracks){
     PLQ.render();
   } else {
-    socket.playQueue();
+    socket.connect(function(){
+      socket.send('TX-playQueue');  
+    });
   }
 });
+
+

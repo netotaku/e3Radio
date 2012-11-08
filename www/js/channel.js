@@ -5,9 +5,10 @@ var channel = (function(){
 
   return {
     publish: function(e){
+      // console.log(e);
       $.each(stack, function(){
-        // console.log(this);
         if(this.event.search(e.event) > -1){
+          // console.log(this);
           this.cb.call(this.inst, e.data);
         }
       })
