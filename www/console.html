@@ -2,16 +2,21 @@
 	<head>
 	</head>
 	<body>
-		<form>
-			<select>
-				<option>Message</option>
-				<option value="pls-playQueue">Play Queue Please</option>
-				<option value="tks-movePlayhead">Move playhead Thanks</option>	
-			</select>
-			<textarea></textarea>
-		</form>	
+		<a href="TX-movePlayhead">Move Playhead</a> |
+		<a href="TX-request">Add Request</a>
 	</body>
-	<script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script type="text/javascript" src="js/channel.js"></script>
+    <script type="text/javascript" src="js/messages.js"></script>
+    <script type="text/javascript" src="js/socket.js"></script>	
+	<script type="text/javascript">
+
+		socket.connect(function(){
+			$('a').click(function(e){
+				e.preventDefault();
+				socket.send($(this).attr('href'));
+			});	
+		});
 
 	</script>
 </html>

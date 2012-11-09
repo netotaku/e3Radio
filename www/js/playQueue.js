@@ -12,14 +12,14 @@ var playQueue = function(){
   });
 
   channel.subscribe(this, {
-    event: 'add-request',
+    event: 'RX-request',
     cb: function(data){
       this.add(data);
     }
   });
 
   channel.subscribe(this, {
-    event: 'move-playhead',
+    event: 'RX-movePlayhead',
     cb: function(){
       this.pop();
     }

@@ -981,7 +981,7 @@ var message = (function(){
 			  }
 			]
 		},
-		'RX-request':{
+		'TX-request':{
 			event: 'RX-request',
 			data:[
 			  {
@@ -1007,7 +1007,7 @@ var message = (function(){
 			  }
 			]
 		},
-		'RX-movePlayhead':{
+		'TX-movePlayhead':{
 			event: 'RX-movePlayhead'
 		}
 	}
