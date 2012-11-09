@@ -8,7 +8,10 @@ var socket = (function(){
     connect: function(cb){
       ws = new WebSocket("ws://echo.websocket.org/");
       ws.onopen = function(evt){
-        $ci.addClass('connected').live('click', function(){});
+        $ci.addClass('connected').find('a').click(function(e){
+          e.preventDefault();
+          socket.send($(this).attr('href'));
+        });
         cb();
       };
       ws.onclose = function(evt){  };

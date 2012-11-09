@@ -1,9 +1,14 @@
 
-#connection-indicator{
-
+#connection-indicator span{
+	display: none;
+	float: right;
 }
 
 #connection-indicator.connected span{
+	display: inline;
+}
+
+#connection-indicator.connected em{
 	color: magenta;
 }
 
