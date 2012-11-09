@@ -42,6 +42,19 @@ namespace e3Radio.Data
         }
 
         /// <summary>
+        /// Format an individual track into a list of anonymous types 
+        /// ready to be serialised.
+        /// </summary>
+        /// <param name="track"></param>
+        /// <returns></returns>
+        public static object FormatTrack(Track track)
+        {
+            // Convert track into IQueryable so we can format it
+            var tracks = new List<Data.Track>() { track }.AsQueryable();
+            return FormatTracks(tracks);
+        }
+
+        /// <summary>
         /// Convert a queryable list of Tracks into a List of anonymous
         /// types suitable to be converted into json and returned.
         /// </summary>
@@ -78,6 +91,15 @@ namespace e3Radio.Data
                     }).ToList();
         }
 
+        public static object GetTrack(int trackId)
+        {
+            using (var db = new e3Radio.Data.E3RadioEntities())
+            {
+                var tk = db.Tracks.FirstOrDefault(t => t.TrackID == trackId);
+                return FormatTrack(tk);
+            }
+        }
+
         public static object RequestTrack(string spotifyUri, long userId)
         {
             using (var db = new e3Radio.Data.E3RadioEntities())
@@ -98,9 +120,8 @@ namespace e3Radio.Data
 
                 db.SaveChanges();
                 
-                // Convert track into IQueryable so we can format it
-                var tracks = new List<Data.Track>() { track }.AsQueryable();
-                return FormatTracks(tracks);
+                // Convert track into list of track info
+                return FormatTrack(track);
             }
         }
 
@@ -122,9 +143,8 @@ namespace e3Radio.Data
                 
                     db.SaveChanges();
 
-                    // Convert track into IQueryable so we can format it
-                    var tracks = new List<Data.Track>() { nowPlaying }.AsQueryable();
-                    return FormatTracks(tracks);
+                    // return the track to be sent to the users
+                    return FormatTrack(nowPlaying);
                 }
                 else
                 {
@@ -143,7 +163,7 @@ namespace e3Radio.Data
         /// <param name="page">Page number starting from 1</param>
         /// <param name="size">Page size</param>
         /// <returns></returns>
-        public static object GetTrackListing(string type, long userId, int page = 1, int size = 10)
+        public static object GetTrackListing(string type, long userId, int page, int size)
         {
             // get from cache if possible
             string cacheKey = GetCacheKey(type, userId, page, size);
@@ -153,8 +173,6 @@ namespace e3Radio.Data
                 //todo:lock here by cache key
                 using (var db = new e3Radio.Data.E3RadioEntities())
                 {
-                    db.Configuration.LazyLoadingEnabled = false;
-
                     // filter and order by
                     var filteredQuery = GetTracksQueryable(type, userId, db);
 

@@ -47,7 +47,7 @@
 
         function sendTrackRequest() {
             var val = {
-                event: 'request-tracks',
+                event: 'TX-playQueue',
                 chart: document.getElementById('ddlChart').value,
                 page: document.getElementById('txtPage').value,
                 pageSize: document.getElementById('txtPageSize').value,
@@ -57,15 +57,22 @@
 
         function sendMakeRequest() {
             var val = {
-                event: 'add-request',
+                event: 'TX-request',
                 data: document.getElementById('txtSpotify').value,
             };
             ws.send(JSON.stringify(val));
         }
         function sendMovePlayhead() {
             var val = {
-                event: 'move-playhead',
+                event: 'TX-movePlayhead',
                 data: document.getElementById('txtPlayhead').value,
+            };
+            ws.send(JSON.stringify(val));
+        }
+        function sendTxTrack() {
+            var val = {
+                event: 'TX-track',
+                id: document.getElementById('txtTrackId').value,
             };
             ws.send(JSON.stringify(val));
         }
@@ -77,7 +84,7 @@
     <h2>request track listing</h2>
     <p>
         {
-            event: 'request-tracks', 
+            event: 'TX-playQueue', 
             chart: '<select id="ddlChart">
                         <option>playQueue</option>
                         <option>worst</option>
@@ -96,14 +103,20 @@
 
     <h2>make a request</h2>
     <p>
-        { event: 'add-request', data: '<input type="text" id="txtSpotify" value="spotify:track:1u1Ps262k227FPAm5BVUjd" />' }
+        { event: 'TX-request', data: '<input type="text" id="txtSpotify" value="spotify:track:1u1Ps262k227FPAm5BVUjd" />' }
         <input type="submit" onclick="sendMakeRequest()" />
     </p>
 
     <h2>move the playhead (debug use only)</h2>
     <p>
-        { event: 'move-playhead', data: '<input type="text" id="txtPlayhead" value="" />' }
+        { event: 'TX-movePlayhead', data: '<input type="text" id="txtPlayhead" value="" />' }
         <input type="submit" onclick="sendMovePlayhead()" />
+    </p>
+    
+    <h2>load a track</h2>
+    <p>
+        { event: 'TX-track', id: '<input type="text" id="txtTrackId" value="" />' }
+        <input type="submit" onclick="sendTxTrack()" />
     </p>
 
     <h2>chat</h2>

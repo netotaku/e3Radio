@@ -110,7 +110,7 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="e3RadioModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
-        <EntityContainer Name="E3RadioEntities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="E3RadioEntities" annotation:LazyLoadingEnabled="false">
           <EntitySet Name="Tracks" EntityType="e3RadioModel.Track" />
           <EntitySet Name="TrackLikes" EntityType="e3RadioModel.TrackLike" />
           <EntitySet Name="Users" EntityType="e3RadioModel.User" />

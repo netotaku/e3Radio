@@ -91,8 +91,18 @@ namespace e3Radio.WebSocketAPI
             // Handle the event
             switch (eventName)
             {
-                case "request-tracks":
-                    SendTrackListing(socket, json);
+                case "TX-playQueue":
+                    // optional parameters, not yet used in interface
+                    string chart = (string)json.Element("chart") ?? "playQueue";
+                    int page = (int?)json.Element("page") ?? 1;
+                    int pageSize = (int?)json.Element("pageSize") ?? 10;
+                    object data = e3Radio.Data.TrackManager.GetTrackListing(chart, userId, page, pageSize);
+                    SendEvent(socket, "RX-playQueue", data);
+                    break;
+                case "TX-track":
+                    int tId = (int)json.Element("id");
+                    var tk = e3Radio.Data.TrackManager.GetTrack(tId);
+                    SendEvent(socket, "RX-track", tk);
                     break;
                 //case "love":
                 //case "hate":
@@ -101,15 +111,15 @@ namespace e3Radio.WebSocketAPI
                 //    var tp = (e3Radio.Data.TrackManager.TrackVoteType)Enum.Parse(typeof(e3Radio.Data.TrackManager.TrackVoteType), eventName);
                 //    e3Radio.Data.TrackManager.SaveTrackVote(userId.Value, trackId.Value, tp);
                 //    break;
-                case "add-request":
+                case "TX-request":
                     string spotifyUri = (string)json.Element("data");
                     var track = e3Radio.Data.TrackManager.RequestTrack(spotifyUri, userId);
-                    BroadcastEvent("add-request", track);
+                    BroadcastEvent("RX-request", track);
                     break;
-                case "move-playhead":
+                case "TX-movePlayhead":
                     string spotifyUri2 = (string)json.Element("data");
                     var track2 = e3Radio.Data.TrackManager.UpdateNowPlayingTrack(spotifyUri2);
-                    BroadcastEvent("move-playhead", track2);
+                    BroadcastEvent("RX-movePlayhead", track2);
                     break;
                 case "chat-message":
                     allSockets.ToList().ForEach(s => s.Send(message));
@@ -134,28 +144,19 @@ namespace e3Radio.WebSocketAPI
         }
 
         /// <summary>
-        /// Sends the requested track listing to the socket.
+        /// Send message to the socket.
         /// </summary>
-        /// <param name="socket"></param>
-        /// <param name="type"></param>
-        /// <param name="page"></param>
-        /// <param name="perPage"></param>
-        private static void SendTrackListing(IWebSocketConnection socket, XElement json)
+        /// <param name="track"></param>
+        private static void SendEvent(IWebSocketConnection socket, string @event, object data)
         {
-            // get params
-            string chart = (string)json.Element("chart");
-            int page = (int)json.Element("page");
-            int pageSize = (int)json.Element("pageSize");
-            long? userId = (long?)json.Element("userId");
-
-            // prepare response
+            // Broadcast message to users in JSON format
             var msg = new
             {
-                @event = "track-listing",
-                data = e3Radio.Data.TrackManager.GetTrackListing(chart, userId.GetValueOrDefault(), page, pageSize)
+                @event = @event,
+                data = data
             };
-            socket.Send(Newtonsoft.Json.JsonConvert.SerializeObject(msg));
-        }
-        
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(msg);
+            socket.Send(json);
+        }        
     }
 }

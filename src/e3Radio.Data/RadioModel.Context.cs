@@ -18,6 +18,7 @@ namespace e3Radio.Data
         public E3RadioEntities()
             : base("name=E3RadioEntities")
         {
+            this.Configuration.LazyLoadingEnabled = false;
         }
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
