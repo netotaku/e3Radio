@@ -449,6 +449,9 @@ img.cover{
 			width: auto;
 			float: none;
 		}
+		h1 span{
+			display: none;
+		}
 
 	}
 
