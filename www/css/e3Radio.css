@@ -1,15 +1,23 @@
 
-#connection-indicator span{
-	display: none;
+#connection
+{
 	float: right;
 }
 
-#connection-indicator.connected span{
+#connection span{
+	display: none;	
+}
+
+#connection.connected span{
 	display: inline;
 }
 
-#connection-indicator.connected em{
+#connection.connected em{
 	color: magenta;
+}
+
+.settings .debug{
+	display: none;
 }
 
 body, html{
@@ -358,11 +366,21 @@ img.cover{
 	border-radius: 25px;
 }
 
+.login span,
+.login em,
+.login a{
+	display: block;
+	float: left;
+	margin-left: 4px;
+}
 
-.login{
-	text-align: center;
-	padding-top: 100px;
-	font-size: 20px;
+.login span{
+	color: #ccc;
+}
+
+.login em{
+	background: magenta;
+	color: #fff;
 }
 
 #app{

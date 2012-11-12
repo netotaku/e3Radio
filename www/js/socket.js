@@ -1,8 +1,27 @@
 
+
+
 var socket = (function(){
 
   var ws;  
-  var $ci = $('#connection-indicator');
+  var $ci = $('#connection');
+
+  var debug = (function(){
+    var $controls = $('.settings .debug');  
+    return {
+      connect: function(){
+        $ci.addClass('connected').find('a').click(function(e){
+          e.preventDefault();
+          socket.send($(this).attr('href'));
+        });
+        $controls.show();
+      },
+      disconnect: function(){
+        $controls.hide();
+        $ci.removeClass('connected').unbind();
+      }
+    }
+  })();
   
   return {
     connect: function(cb){
@@ -11,10 +30,7 @@ var socket = (function(){
       } else {
         ws = new WebSocket("ws://echo.websocket.org/");
         ws.onopen = function(evt){
-          $ci.addClass('connected').find('a').click(function(e){
-            e.preventDefault();
-            socket.send($(this).attr('href'));
-          });
+          debug.connect();        
           cb();
         };
         ws.onclose = function(evt){  };
@@ -25,7 +41,7 @@ var socket = (function(){
       }
     },
     disconnect: function(){
-      $ci.removeClass('connected').unbind();
+      debug.disconnect();
       ws.close();
     },
     send: function(m){
