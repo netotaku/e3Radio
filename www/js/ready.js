@@ -2,15 +2,16 @@
 var router = Backbone.Router.extend({
   routes: {
     "track/:id": "track",
+    "search/:query": "search",
     "*actions": "defaultRoute"
   }
 });
 
-var PGE = new page;
 var RTR = new router;
 var PLQ = new playQueue;
 var CHT = new chart;
 var TRK = new track;
+var SCH = new search;
 
 var e3R = (function(){
 
@@ -29,20 +30,25 @@ var e3R = (function(){
 ///////////////////////////
 
 RTR.on('route:track', function(id) {
-  modal.show();
-  // PGE.chrome();
   CHT.unbind();
-  TRK.bind();
-  socket.connect(function(){
-    socket.send('TX-track');  
-  });
+  SCH.unbind();
+  TRK.bind(id);
+});
+
+RTR.on('route:search', function(query) {
+  CHT.unbind();
+  TRK.unbind();
+  SCH.bind(query);
 });
 
 RTR.on('route:defaultRoute', function(actions) {
-  modal.show();
-  // PGE.chrome();
   CHT.bind();
   TRK.unbind();
+  SCH.unbind();
+});
+
+RTR.bind("all", function(route, router) {
+  modal.show();
   if(PLQ.tracks){
     PLQ.render();
   } else {
@@ -51,5 +57,3 @@ RTR.on('route:defaultRoute', function(actions) {
     });
   }
 });
-
-

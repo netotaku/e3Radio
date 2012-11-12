@@ -60,9 +60,12 @@
           </menu> 
           <%= logo %>
         </header>
-        <div id="request">
+        <div id="search">
           <form>
-            <input type="text" name="request" placeholder="Democratically building the ultimate e3 playlist...">
+            <fieldset>
+              <input type="text" name="request" placeholder="Democratically building the ultimate e3 playlist...">
+            </fieldset>
+            <button type="submit" class="icon-search"> Search</button>
           </form>
         </div>
       </script>
@@ -133,6 +136,11 @@
         <ul id="tracks"></ul>
       </script>
 
+      <script type="text/html" id="search">
+        <h2>Result</h2>
+        <ul id="result"></ul>
+      </script>
+
       <script type="text/html" id="page">
         <%= header %>
         <div class="content">
@@ -160,6 +168,7 @@
       <script type="text/javascript" src="js/modal.js"></script>
       <script type="text/javascript" src="js/channel.js"></script>
       <script type="text/javascript" src="js/socket.js"></script>
+      <script type="text/javascript" src="js/search.js"></script>
       <script type="text/javascript" src="js/page.js"></script>
       <script type="text/javascript" src="js/playQueue.js"></script>
       <script type="text/javascript" src="js/track.js"></script>

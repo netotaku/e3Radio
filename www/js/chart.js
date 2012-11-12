@@ -4,8 +4,8 @@ var chart = function(){
     Backbone.history.navigate('track/' + $(this).data('track-id'), true); 
   });
 }
-chart.prototype.draw = function(data){
-  PGE.chrome();
+chart.prototype.render = function(data){
+  page.chrome();
   var $ul = $($('#chart').html()).appendTo($('#content').empty());
   var i = 1;
 
@@ -14,16 +14,12 @@ chart.prototype.draw = function(data){
   });
 
   modal.hide();
-
-  // channel.publish({
-  //   event: 'after-draw'
-  // });
 }
 chart.prototype.bind = function(){
   channel.subscribe(this, {
     event: 'render-chart',
     cb: function(data){
-      this.draw(data);
+      this.render(data);
     }
   });
 }

@@ -199,20 +199,51 @@ footer{
 }
 
 
-#request{
-	position: relative;
+#search{
+	
 	padding: 10px;
 	border-bottom: 1px dotted #ccc;	
 }
 
-#request form input{
+#search form{
+	position: relative;
 	border: solid 1px #ccc;
+	font-size: 15px;
+}
+
+#search form fieldset{
+	margin-right: 85px;
+}
+
+#search form input,
+#search form button
+{
+	border: 0px;
 	padding: 5px;
+	display: block;
+}
+
+#search form button{
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+	width: 85px;
+	background: #ccc;
+	margin: 0px;
+	font-size: 15px;
+}
+
+
+#search form input[type=text]{
     width: 100%;
     box-sizing: border-box;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
 }
+
+
 
 .track-detail{
 	padding: 10px;
