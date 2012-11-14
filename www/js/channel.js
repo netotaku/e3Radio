@@ -3,13 +3,14 @@ var channel = (function(){
 
   var stack = [];
 
+  var tst = function(evs, ev){
+    return $.inArray(ev.event, evs.split(' '));
+  }
+
   return {
     publish: function(e){
-      //console.log(stack);
       $.each(stack, function(){
-        
-        if(this.event.search(e.event) > -1){  
-          console.log(this);
+        if(tst(this.event, e) > -1){
           this.cb.call(this.inst, e.data);
         }
       })

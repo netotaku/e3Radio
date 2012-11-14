@@ -6,12 +6,12 @@ channel.subscribe(this, {
   }
 });
 
-// channel.subscribe(this, {
-//   event: 'dis',
-//   cd: function(){
-//     $('#connection').removeClass('connected');
-//   }
-// });
+channel.subscribe(this, {
+  event: 'disconnected',
+  cd: function(){
+    $('#connection').removeClass('connected');
+  }
+});
 
 ///////////////////////
 
@@ -21,11 +21,11 @@ var socket = (function(){
   var ws;  
   
   var onOpen = function(evt){
-    channel.publish({ event: 'con' });
+    channel.publish({ event: 'connected' });
   }
 
   var onClose = function(){
-    channel.publish({ event: 'dis' });
+    channel.publish({ event: 'disconnected' });
   }
 
   var onMessage = function(evt){
