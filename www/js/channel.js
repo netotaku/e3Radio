@@ -10,8 +10,13 @@ var channel = (function(){
   return {
     publish: function(e){
       $.each(stack, function(){
-        if(tst(this.event, e) > -1){
-          this.cb.call(this.inst, e.data);
+        try {
+          if(tst(this.event, e) > -1){
+            this.cb.call(this.inst, e.data);
+          }
+        } catch(err){
+          console.log(this); // catching unsubscribe / subscribe clash.
+          // console.log(err);
         }
       })
     },

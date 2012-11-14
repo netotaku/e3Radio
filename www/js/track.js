@@ -1,6 +1,6 @@
 
 var track = function(){
-  this.id;
+  // this.id;
 }
 track.prototype.html = function(data){
   return _.template($('#track-detail').html(), data);
@@ -13,7 +13,7 @@ track.prototype.render = function(data){
   this.unbind();
 }
 track.prototype.bind = function(id){
-  this.id = id;
+  // this.id = id;
   channel.subscribe(this, {
     event: 'RX-track',
     cb: function(data){
@@ -25,7 +25,7 @@ track.prototype.bind = function(id){
     event: 'ready',
     cb: function(){
       l('requesting track');
-      socket.send('TX-track', { TrackID: id });  
+      socket.send('TX-track');  
     }
   });
 }
