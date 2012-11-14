@@ -1,18 +1,10 @@
 
-#connection
-{
-	float: right;
-}
-
 #connection span{
-	display: none;	
+	float: right;
+	display: block;	
 }
 
 #connection.connected span{
-	display: inline;
-}
-
-#connection.connected em{
 	color: magenta;
 }
 

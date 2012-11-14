@@ -5,6 +5,18 @@ var playQueue = function(){
   var that = this;
 
   channel.subscribe(this, {
+    event: 'connected',
+    cb: function(){
+      if(!this.tracks){
+        console.log('requesting playQueue'); 
+        socket.send('TX-playQueue');
+      } else {
+        this.render();
+      }
+    }
+  });
+
+  channel.subscribe(this, {
     event: 'RX-playQueue',
     cb: function(data){
       this.ini(data);
@@ -46,7 +58,7 @@ playQueue.prototype.add = function(data){
 playQueue.prototype.render = function(){
   var that = this;
   channel.publish({ 
-    event: 'render-chart', 
+    event: 'ready', 
     data: that.tracks 
   });
 }

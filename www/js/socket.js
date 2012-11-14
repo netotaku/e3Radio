@@ -1,47 +1,49 @@
 
+channel.subscribe(this, {
+  event: 'connected',
+  cb: function(){
+     $('#connection').addClass('connected');
+  }
+});
 
+// channel.subscribe(this, {
+//   event: 'dis',
+//   cd: function(){
+//     $('#connection').removeClass('connected');
+//   }
+// });
+
+///////////////////////
 
 var socket = (function(){
 
+  var uri = "ws://echo.websocket.org/";
   var ws;  
-  var $ci = $('#connection');
-
-  var debug = (function(){
-    var $controls = $('.settings .debug');  
-    return {
-      connect: function(){
-        $ci.addClass('connected').find('a').click(function(e){
-          e.preventDefault();
-          socket.send($(this).attr('href'));
-        });
-        $controls.show();
-      },
-      disconnect: function(){
-        $controls.hide();
-        $ci.removeClass('connected').unbind();
-      }
-    }
-  })();
   
+  var onOpen = function(evt){
+    channel.publish({ event: 'con' });
+  }
+
+  var onClose = function(){
+    channel.publish({ event: 'dis' });
+  }
+
+  var onMessage = function(evt){
+    channel.publish(JSON.parse(evt.data));
+  }
+
   return {
-    connect: function(cb){
+    connect: function(){
       if(ws){
-        cb();
+        onOpen();
       } else {
-        ws = new WebSocket("ws://echo.websocket.org/");
-        ws.onopen = function(evt){
-          debug.connect();        
-          cb();
-        };
-        ws.onclose = function(evt){  };
-        ws.onmessage = function(evt){ 
-          channel.publish(JSON.parse(evt.data));
-        };
-        ws.onerror = function(evt){ };
+        ws = new WebSocket(uri);
+        ws.onopen = onOpen;
+        ws.onmessage = onMessage;
+        ws.onclose = onClose;
       }
     },
     disconnect: function(){
-      debug.disconnect();
       ws.close();
     },
     send: function(m){

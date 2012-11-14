@@ -30,30 +30,31 @@ var e3R = (function(){
 ///////////////////////////
 
 RTR.on('route:track', function(id) {
-  CHT.unbind();
-  SCH.unbind();
-  TRK.bind(id);
+  // CHT.unbind();
+  // SCH.unbind();
+  // TRK.bind(id);
 });
 
 RTR.on('route:search', function(query) {
-  CHT.unbind();
-  TRK.unbind();
-  SCH.bind(query);
+  // CHT.unbind();
+  // TRK.unbind();
+  // SCH.bind(query);
 });
 
 RTR.on('route:defaultRoute', function(actions) {
-  CHT.bind();
-  TRK.unbind();
-  SCH.unbind();
+  // CHT.bind();
+  // TRK.unbind();
+  // SCH.unbind();
 });
 
 RTR.bind("all", function(route, router) {
   modal.show();
-  if(PLQ.tracks){
-    PLQ.render();
-  } else {
-    socket.connect(function(){
-      socket.send('TX-playQueue');  
-    });
-  }
+  socket.connect();
+  // if(PLQ.tracks){
+  //   PLQ.render();
+  // } else {
+  //   socket.connect(function(){
+  //     socket.send('TX-playQueue');  
+  //   });
+  // }
 });
