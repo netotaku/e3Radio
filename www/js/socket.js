@@ -21,10 +21,12 @@ var socket = (function(){
   var ws;  
   
   var onOpen = function(evt){
+    l('socket open');
     channel.publish({ event: 'connected' });
   }
 
   var onClose = function(){
+    l('socket closed');
     channel.publish({ event: 'disconnected' });
   }
 
@@ -37,6 +39,7 @@ var socket = (function(){
       if(ws){
         onOpen();
       } else {
+        l('opening socket');
         ws = new WebSocket(uri);
         ws.onopen = onOpen;
         ws.onmessage = onMessage;
@@ -46,7 +49,7 @@ var socket = (function(){
     disconnect: function(){
       ws.close();
     },
-    send: function(m){
+    send: function(m, params){
       ws.send(JSON.stringify(message.get(m)));
     }
   }

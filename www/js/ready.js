@@ -30,31 +30,24 @@ var e3R = (function(){
 ///////////////////////////
 
 RTR.on('route:track', function(id) {
-  // CHT.unbind();
+  CHT.unbind();
+  TRK.bind(id);
   // SCH.unbind();
-  // TRK.bind(id);
 });
 
 RTR.on('route:search', function(query) {
-  // CHT.unbind();
-  // TRK.unbind();
+  CHT.unbind();
+  TRK.unbind();
   // SCH.bind(query);
 });
 
 RTR.on('route:defaultRoute', function(actions) {
-  // CHT.bind();
-  // TRK.unbind();
-  // SCH.unbind();
+  TRK.unbind(); 
+  CHT.bind();
+  // SCH.unbind(); 
 });
 
 RTR.bind("all", function(route, router) {
   modal.show();
   socket.connect();
-  // if(PLQ.tracks){
-  //   PLQ.render();
-  // } else {
-  //   socket.connect(function(){
-  //     socket.send('TX-playQueue');  
-  //   });
-  // }
 });

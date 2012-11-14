@@ -8,9 +8,10 @@ var playQueue = function(){
     event: 'connected',
     cb: function(){
       if(!this.tracks){
-        console.log('requesting playQueue'); 
+        l('requesting playQueue'); 
         socket.send('TX-playQueue');
       } else {
+        l('retreiving playQueue from cache');
         this.render();
       }
     }
@@ -19,6 +20,7 @@ var playQueue = function(){
   channel.subscribe(this, {
     event: 'RX-playQueue',
     cb: function(data){
+      l('playQueue recieved');
       this.ini(data);
     }
   });
@@ -26,6 +28,7 @@ var playQueue = function(){
   channel.subscribe(this, {
     event: 'RX-request',
     cb: function(data){
+      l('request recieved');
       this.add(data);
     }
   });
@@ -33,6 +36,7 @@ var playQueue = function(){
   channel.subscribe(this, {
     event: 'RX-movePlayhead',
     cb: function(){
+      l('next track');
       this.pop();
     }
   });
@@ -56,6 +60,7 @@ playQueue.prototype.add = function(data){
   this.render();
 }
 playQueue.prototype.render = function(){
+  l('ready');
   var that = this;
   channel.publish({ 
     event: 'ready', 

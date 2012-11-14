@@ -5,6 +5,7 @@ var chart = function(){
   });
 }
 chart.prototype.render = function(data){
+  l('rendering chart');
   page.chrome();
   var $ul = $($('#chart').html()).appendTo($('#content').empty());
   var i = 1;
@@ -17,7 +18,7 @@ chart.prototype.render = function(data){
 }
 chart.prototype.bind = function(){
   channel.subscribe(this, {
-    event: 'render-chart',
+    event: 'ready',
     cb: function(data){
       this.render(data);
     }

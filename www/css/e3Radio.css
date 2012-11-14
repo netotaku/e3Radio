@@ -8,6 +8,10 @@
 	color: magenta;
 }
 
+button{
+	font-family: Times New Roman;
+}
+
 .settings .debug{
 	display: none;
 }
