@@ -1,5 +1,6 @@
-
 var search = function(){
+
+	this.query;
 
 	var spotifyURI;
 
@@ -27,9 +28,19 @@ var search = function(){
 	});
 	
 }
-search.prototype.bind = function(){
-
+search.prototype.bind = function(query){
+	this.query = query;
+	channel.subscribe(this, {
+		event: 'ready',
+		cb: function(){
+			this.render();
+		}
+	});
 }
 search.prototype.unbind = function(){
-	
+	channel.unsubscribe(this);
+}
+search.prototype.render = function(){
+	page.chrome();
+	$('#content').empty().html($('#result').html());
 }

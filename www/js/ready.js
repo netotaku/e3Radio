@@ -32,22 +32,23 @@ var e3R = (function(){
 RTR.on('route:track', function(id) {
   CHT.unbind();
   TRK.bind(id);
-  // SCH.unbind();
+  SCH.unbind();
 });
 
 RTR.on('route:search', function(query) {
   CHT.unbind();
   TRK.unbind();
-  // SCH.bind(query);
+  SCH.bind(query);
 });
 
 RTR.on('route:defaultRoute', function(actions) {
   TRK.unbind(); 
   CHT.bind();
-  // SCH.unbind(); 
+  SCH.unbind(); 
 });
 
-RTR.bind("all", function(route, router) {
+RTR.bind("all", function(route) {
+  l(route);
   modal.show();
   socket.connect();
 });
