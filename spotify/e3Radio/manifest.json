@@ -17,6 +17,7 @@
 	],
 	"RequiredPermissions": [ 
 		"http://localhost:50711",
+		"http://localhost:8181",
 		"http://radio.e3.co.uk"
 	]
 }
