@@ -1,7 +1,7 @@
 e3Radio 2.0 1st Release
 ====================
 
-The application consists of a continuos circular buffer of 'tracks' 
+The application consists of a circular buffer of 'tracks' 
 
 1. Play back commences
 ---------------------
@@ -60,18 +60,4 @@ latest IE, Chrome, Safari, Safari mobile, chrome mobile, with experience optimis
 * charts
 * notifications
 
-Messaging
----------------------
-
-# Socket
-
-> { event: 'init-playQueue', data: [ ... tracks ... ] }
->
-> { event: 'add-request', data: [ ... tracks ... ] }
->
-> { event: 'move-playhead' }
-
-# Events
-
-> { event: 'draw-chart', data: [ ... tracks ... ] }
 
