@@ -11,8 +11,7 @@ var search = function(){
 		var query = $input.val();
 
 		if(query){
-			Backbone.history.navigate('search/' + query, true); 
-			page.chrome();			
+			Backbone.history.navigate('search/' + query, true); 			
 		} else {
 			$form.css({
 				'border-color': 'magenta'
@@ -42,5 +41,8 @@ search.prototype.unbind = function(){
 }
 search.prototype.render = function(){
 	page.chrome();
+	// console.log($('#content'));
+	//console.log($('#result').html());
 	$('#content').empty().html($('#result').html());
+	l('rendering search results');
 }

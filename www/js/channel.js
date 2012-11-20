@@ -9,16 +9,32 @@ var channel = (function(){
 
   return {
     publish: function(e){
-      $.each(stack, function(){
-        try {
-          if(tst(this.event, e) > -1){
-            this.cb.call(this.inst, e.data);
+
+      var i = 0;
+
+      var each = function(){
+
+        if(stack[i]){
+          try{
+            if(tst(stack[i].event, e) > -1){
+              stack[i].cb.call(stack[i].inst, e.data);
+            }
+          } catch(err){
+            console.log(this); // catching unsubscribe / subscribe clash?
+            console.log(err);
           }
-        } catch(err){
-          console.log(this); // catching unsubscribe / subscribe clash.
-          // console.log(err);
+
+          i++;
+          each();
+
+        } else {
+          i = 0;
         }
-      })
+
+      }
+
+      each();      
+
     },
     subscribe: function(i, data){
       stack.push(_.extend({
@@ -26,13 +42,19 @@ var channel = (function(){
       }, data));
     },
     unsubscribe: function(obj, event){
+      l('unsubscribing');
       var i = 0;
       for(o in stack){
+        console.log(obj);
+        console.log(stack[o].inst);
+        console.log('-------');        
         if(stack[o].inst == obj){
-          stack.splice(i, 1);
+          console.log(stack.splice(i, 1));
+          console.log('----------------------------------'); 
         }
         i++;
       }
+      //console.log(stack);
     } 
   }
 

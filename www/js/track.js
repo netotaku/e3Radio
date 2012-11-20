@@ -10,7 +10,7 @@ track.prototype.render = function(data){
   page.chrome();
   $('#content').empty().html(this.html(data[0]));
   modal.hide();
-  this.unbind();
+  // this.unbind();
 }
 track.prototype.bind = function(id){
   // this.id = id;

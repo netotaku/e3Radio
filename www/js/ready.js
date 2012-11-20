@@ -37,11 +37,13 @@ RTR.on('route:track', function(id) {
 
 RTR.on('route:search', function(query) {
   CHT.unbind();
+  console.log(' > unbind track');
   TRK.unbind();
   SCH.bind(query);
 });
 
 RTR.on('route:defaultRoute', function(actions) {
+  console.log(' > unbind track');
   TRK.unbind(); 
   CHT.bind();
   SCH.unbind(); 
