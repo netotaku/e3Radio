@@ -1,4 +1,5 @@
 
 var l = function(str){
-	// console.log(str);
+	console = console || { log: function(){} };
+	console.log(str);
 }

@@ -42,19 +42,13 @@ var channel = (function(){
       }, data));
     },
     unsubscribe: function(obj, event){
-      l('unsubscribing');
-      var i = 0;
-      for(o in stack){
-        console.log(obj);
-        console.log(stack[o].inst);
-        console.log('-------');        
-        if(stack[o].inst == obj){
-          console.log(stack.splice(i, 1));
-          console.log('----------------------------------'); 
-        }
-        i++;
+      var queue = stack;
+      stack = [];
+      for(o in queue){        
+        if(queue[o].inst != obj){
+           stack.push(queue[o]); 
+        } 
       }
-      //console.log(stack);
     } 
   }
 
