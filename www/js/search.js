@@ -11,7 +11,7 @@ var search = function(){
 		var query = $input.val();
 
 		if(query){
-			Backbone.history.navigate('search/' + query, true); 			
+			Backbone.history.navigate('search/' + encodeURI(query), true); 			
 		} else {
 			$form.css({
 				'border-color': 'magenta'
@@ -41,8 +41,22 @@ search.prototype.unbind = function(){
 }
 search.prototype.render = function(){
 	page.chrome();
-	// console.log($('#content'));
-	//console.log($('#result').html());
 	$('#content').empty().html($('#result').html());
-	l('rendering search results');
+	$list = $('#list tbody');
+
+	var url = "http://ws.spotify.com/search/1/track.json?q=" + this.query;
+
+	$.ajax({
+	  url: url,
+	  context: document.body,
+	  crossDomain: true
+	}).done(function(data) {
+		modal.hide();
+	  	console.log(data);
+	  	$.each(data.tracks, function(){
+	  		$list.append(_.template($('#search-result-row').html(), this));
+	  	});
+
+	});
+
 }

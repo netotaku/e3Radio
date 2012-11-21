@@ -132,7 +132,26 @@
       </script>
 
       <script type="text/html" id="result">
-        <h2>Result</h2>
+        <div id="list">
+          <table>
+            <thead>
+              <tr>
+                <th>Track</th>
+                <th>Album</th>
+                <th>Artist</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </script>
+
+      <script type="text/html" id="search-result-row">
+        <tr>
+          <td><span><%= name %></span></td>
+          <td><span><%= album.name %></span></td>
+          <td><span><%= artists[0].name %></span></td>
+        </tr>
       </script>
 
       <script type="text/html" id="page">

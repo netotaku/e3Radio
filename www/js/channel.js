@@ -9,11 +9,8 @@ var channel = (function(){
 
   return {
     publish: function(e){
-
       var i = 0;
-
       var each = function(){
-
         if(stack[i]){
           try{
             if(tst(stack[i].event, e) > -1){
@@ -23,18 +20,13 @@ var channel = (function(){
             console.log(this); // catching unsubscribe / subscribe clash?
             console.log(err);
           }
-
           i++;
           each();
-
         } else {
           i = 0;
         }
-
       }
-
       each();      
-
     },
     subscribe: function(i, data){
       stack.push(_.extend({
