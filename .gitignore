@@ -5,5 +5,7 @@
 /src/e3Radio.API/obj
 /src/e3Radio.Data/obj
 /src/e3Radio.Data/bin
+/src/e3Radio.Service/obj
+/src/e3Radio.Service/bin
 /src/e3Radio.WebSocketAPI/obj
 /src/e3Radio.WebSocketAPI/bin
