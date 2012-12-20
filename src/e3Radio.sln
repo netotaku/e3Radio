@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "e3Radio.API", "e3Radio.API\e3Radio.API.csproj", "{7E7706D9-E426-4CDA-99C2-D46F2DF2F5F4}"
-EndProject
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "www", "http://localhost:65211", "{6760DFB6-73C3-4F84-8AB8-AA4E7E889ECF}"
 	ProjectSection(WebsiteProperties) = preProject
 		UseIISExpress = "true"
@@ -26,8 +24,6 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "www", "http://localhost:652
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "e3Radio.Data", "e3Radio.Data\e3Radio.Data.csproj", "{C0F797C6-AD72-4111-813D-4C29C8B111D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "e3Radio.WebSocketAPI", "e3Radio.WebSocketAPI\e3Radio.WebSocketAPI.csproj", "{6D736EC6-396E-4CAA-8F75-77B5603BAFF2}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "e3Radio.Service", "e3Radio.Service\e3Radio.Service.csproj", "{C3B7DBE8-A2BB-4DC8-BDEA-392CE912E49D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{2A5B0ABB-C19F-4BBB-AE0A-D0F587DEAE6F}"
@@ -43,10 +39,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7E7706D9-E426-4CDA-99C2-D46F2DF2F5F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7E7706D9-E426-4CDA-99C2-D46F2DF2F5F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7E7706D9-E426-4CDA-99C2-D46F2DF2F5F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7E7706D9-E426-4CDA-99C2-D46F2DF2F5F4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6760DFB6-73C3-4F84-8AB8-AA4E7E889ECF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6760DFB6-73C3-4F84-8AB8-AA4E7E889ECF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6760DFB6-73C3-4F84-8AB8-AA4E7E889ECF}.Release|Any CPU.ActiveCfg = Debug|Any CPU
@@ -55,10 +47,6 @@ Global
 		{C0F797C6-AD72-4111-813D-4C29C8B111D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0F797C6-AD72-4111-813D-4C29C8B111D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0F797C6-AD72-4111-813D-4C29C8B111D0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6D736EC6-396E-4CAA-8F75-77B5603BAFF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6D736EC6-396E-4CAA-8F75-77B5603BAFF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6D736EC6-396E-4CAA-8F75-77B5603BAFF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6D736EC6-396E-4CAA-8F75-77B5603BAFF2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C3B7DBE8-A2BB-4DC8-BDEA-392CE912E49D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C3B7DBE8-A2BB-4DC8-BDEA-392CE912E49D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C3B7DBE8-A2BB-4DC8-BDEA-392CE912E49D}.Release|Any CPU.ActiveCfg = Release|Any CPU
