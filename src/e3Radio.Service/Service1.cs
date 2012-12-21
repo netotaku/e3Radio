@@ -56,7 +56,15 @@ namespace e3Radio.Service
                 socket.OnMessage = message =>
                 {
                     // when a client sends us a message, do something
-                    HandleIncomingMessage(socket, message);
+                    try
+                    {
+                        HandleIncomingMessage(socket, message);
+                    }
+                    catch (Exception ex)
+                    {
+                        // don't die server if something goes wrong but do log it
+                        Console.WriteLine("ERROR: " + ex.ToString());
+                    }
                 };
             });
         }
